@@ -20,84 +20,33 @@ export default async function handler(req, res) {
   try {
     const d = req.body;
 
-    // Build RAG emoji
-    const ragEmoji = d.rag === 'Red' ? '🔴' : d.rag === 'Amber' ? '🟡' : '🟢';
+    // Build a clean payload object (exclude verbose answers array for Teams message)
+    const scoreData = {
+      timestamp: d.timestamp,
+      company: d.company,
+      name: d.name,
+      role: d.role,
+      model: d.model,
+      persona: d.persona,
+      dim00: d.dim00,
+      dim01: d.dim01,
+      dim02: d.dim02,
+      dim03: d.dim03,
+      dim04: d.dim04,
+      dim05: d.dim05,
+      overall: d.overall,
+      rag: d.rag
+    };
 
-    // Build dimension breakdown string
-    const dimBreakdown = [
-      `00 Strategic Priorities: ${d.dim00}%`,
-      `01 Daily Operations: ${d.dim01}%`,
-      `02 Structural Volatility: ${d.dim02}%`,
-      `03 Shock Events: ${d.dim03}%`,
-      `04 Strategic Capital: ${d.dim04}%`,
-      `05 Ecosystem Scale: ${d.dim05}%`
-    ].join('\n');
-
-    // Build answer details if available
-    let answerDetails = '';
-    if (d.answers && Array.isArray(d.answers)) {
-      answerDetails = d.answers.map(a =>
-        `[${a.dimension}] Q${a.questionIndex + 1}: ${a.selectedOption}`
-      ).join('\n');
-    }
-
-    // Format as Adaptive Card for clean Teams channel rendering
-    const card = {
-      type: "message",
-      attachments: [{
-        contentType: "application/vnd.microsoft.card.adaptive",
-        content: {
-          "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-          type: "AdaptiveCard",
-          version: "1.4",
-          body: [
-            {
-              type: "TextBlock",
-              text: `📊 New Assessment: ${d.company || 'Unknown'}`,
-              weight: "Bolder",
-              size: "Medium",
-              wrap: true
-            },
-            {
-              type: "TextBlock",
-              text: `${d.name || 'Anonymous'} · ${d.role || 'N/A'} · ${d.model || 'N/A'} · ${d.persona || 'N/A'}`,
-              isSubtle: true,
-              wrap: true
-            },
-            {
-              type: "TextBlock",
-              text: `${ragEmoji} Overall Score: ${d.overall}% (${d.rag})`,
-              weight: "Bolder",
-              color: d.rag === 'Red' ? 'Attention' : d.rag === 'Amber' ? 'Warning' : 'Good'
-            },
-            {
-              type: "FactSet",
-              facts: [
-                { title: "Dim 00 - Strategic Priorities", value: `${d.dim00}%` },
-                { title: "Dim 01 - Daily Operations", value: `${d.dim01}%` },
-                { title: "Dim 02 - Structural Volatility", value: `${d.dim02}%` },
-                { title: "Dim 03 - Shock Events", value: `${d.dim03}%` },
-                { title: "Dim 04 - Strategic Capital", value: `${d.dim04}%` },
-                { title: "Dim 05 - Ecosystem Scale", value: `${d.dim05}%` }
-              ]
-            },
-            {
-              type: "TextBlock",
-              text: `Submitted: ${d.timestamp || new Date().toISOString()}`,
-              isSubtle: true,
-              size: "Small"
-            }
-          ]
-        }
-      }],
-      // Full payload as JSON string for Power Automate to parse
-      summary: JSON.stringify(d)
+    // Send as plain text — Teams trigger can read this from body/body/content
+    const payload = {
+      text: JSON.stringify(scoreData)
     };
 
     const webhookRes = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(card)
+      body: JSON.stringify(payload)
     });
 
     if (!webhookRes.ok) {
