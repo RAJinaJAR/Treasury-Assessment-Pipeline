@@ -87,6 +87,12 @@ export default async function handler(req, res) {
               text: `Submitted: ${d.timestamp || new Date().toISOString()}`,
               isSubtle: true,
               size: "Small"
+            },
+            {
+              type: "TextBlock",
+              text: JSON.stringify(d),
+              isVisible: false,
+              id: "rawPayload"
             }
           ]
         }
