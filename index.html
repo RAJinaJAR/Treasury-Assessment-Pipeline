@@ -253,6 +253,45 @@ h1 em{font-style:italic;color:var(--gold)}
 .rc-bar-fill{height:100%;border-radius:2px;transition:width 1s ease .3s}
 .rc-bar-fill.red{background:#ef4444}.rc-bar-fill.amber{background:#f59e0b}.rc-bar-fill.green{background:#10b981}
 .rc-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+
+/* ── PRINT STYLES ── */
+@media print {
+  @page { size: A4; margin: 15mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  body { background: #fff !important; color: #1a1a2e !important; font-size: 11px; }
+  .screen { display: none !important; }
+  #s-report { display: flex !important; }
+  .hdr, .cta-box, .assess-footer, .sidebar, .assess-topbar, .land-bg, #s-land, #s-setup, #s-assess { display: none !important; }
+  .rbody { max-width: 100% !important; padding: 0 !important; }
+  .r-hero { border-bottom: 2px solid #c9a84c !important; }
+  .r-title { color: #07091a !important; }
+  .r-eyebrow, .viz-title, .sl, .dim-nav-lbl, .reclbl { color: #c9a84c !important; }
+  .r-meta, .r-sum, .nar, .impact-t, .cta-d { color: #333 !important; }
+  .viz-subtitle, .dcard-name, .impact-h, .flbl { color: #07091a !important; }
+  .ftxt, .reclist li, .rl-name, .rc-name { color: #333 !important; }
+  .dcard-body { display: block !important; border-top: 1px solid #ddd !important; }
+  .dcard-body.open { display: block !important; }
+  .chev { display: none !important; }
+  .dcard { border: 1px solid #ddd !important; page-break-inside: avoid; margin-bottom: 10px !important; }
+  .dcard-hdr { cursor: default !important; }
+  .viz-section { border: 1px solid #ddd !important; page-break-inside: avoid; }
+  .impact-box { border: 1px solid #ddd !important; page-break-inside: avoid; }
+  .recbox { border: 1px solid #c9a84c !important; background: #fdf8e8 !important; }
+  .regime-card { border: 1px solid #ddd !important; background: #f9f9fc !important; }
+  .verdict { border: 1px solid currentColor !important; }
+  .dcard, .viz-section, .impact-box { background: #fff !important; }
+  svg text { fill: #07091a !important; }
+  .ring-lbl, .rc-label, .sbar-lbl, .topbar-meta { color: #666 !important; }
+  .finding { border-bottom: 1px solid #eee !important; }
+  .r-hero { display: block !important; }
+  .ring-wrap { float: right; margin-left: 20px; }
+}
+
+
+/* ── OUTLINE BUTTON ── */
+.btn-outline{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--gold);font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;padding:13px 30px;border-radius:4px;border:1px solid var(--gold);cursor:pointer;text-transform:uppercase;transition:all .2s;text-decoration:none}
+.btn-outline:hover{background:rgba(201,168,76,.1);transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.15)}
+
 </style>
 </head>
 <body>
@@ -1265,15 +1304,16 @@ function generateReport(){
     </div>
     <div class="cta-box">
       <div class="cta-h">Save & Share Your Results</div>
-      <p class="cta-d">Submit your assessment results to our team. Your data will be securely recorded and one of our specialists will walk you through a prioritised roadmap for your operating model.</p>
-      <button class="btn-cta" id="submit-btn" onclick="submitResults()" style="margin-bottom:10px">
-          Submit Assessment Results
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
-        <br>
-        <a href="mailto:treasury@iongroup.com" style="display:inline-flex;align-items:center;gap:7px;color:var(--gold);font-size:12px;text-decoration:none;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;margin-top:8px">
-          ✉ Request a Strategic Review
-        </a>
+      <p class="cta-d">Submit your assessment results securely to our team, or download the full report with dimension scores, findings and recommendations as a PDF.</p>
+      <button class="btn-cta" id="submit-btn" onclick="submitResults()" style="margin-bottom:12px">
+        Submit Assessment Results
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <br>
+      <button class="btn-outline" onclick="downloadReport()">
+        Download Report as PDF
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </button>
       <div class="cta-fine">Confidential · For internal and client use only · ION Group</div>
     </div>`;
 
@@ -1372,6 +1412,24 @@ async function submitResults() {
     btn.style.opacity = '1';
     btn.disabled = false;
   }
+}
+
+// ══════════════════════════════════════════════
+// DOWNLOAD REPORT AS PDF (via Print)
+// ══════════════════════════════════════════════
+function downloadReport() {
+  // Force-open all dimension card bodies so they appear in the PDF
+  DIMS.forEach((_, i) => {
+    const body = document.getElementById(`rb-${i}`);
+    const hdr = document.getElementById(`rh-${i}`);
+    if (body) body.classList.add('open');
+    if (hdr) hdr.classList.add('open');
+  });
+
+  // Brief delay to let DOM update, then trigger print dialog
+  setTimeout(() => {
+    window.print();
+  }, 250);
 }
 
 </script>
