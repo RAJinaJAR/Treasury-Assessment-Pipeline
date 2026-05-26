@@ -44,6 +44,7 @@ export default async function handler(req, res) {
     // Format as Adaptive Card for clean Teams channel rendering
     const card = {
       type: "message",
+      text: JSON.stringify(d),
       attachments: [{
         contentType: "application/vnd.microsoft.card.adaptive",
         content: {
