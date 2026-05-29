@@ -2249,6 +2249,23 @@ function toggleCard(i){
 }
 
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// GENERATE SHAREABLE REPORT URL
+// ══════════════════════════════════════════════
+function generateReportUrl() {
+  var state = {c:S.company,n:S.name,r:S.role,m:S.model,p:S.persona,a:{}};
+  DKEYS.forEach(function(k) {
+    state.a[k] = {};
+    Object.keys(S.answers[k]).forEach(function(sub) {
+      var arr = S.answers[k][sub];
+      if (arr && arr.length) {
+        state.a[k][sub] = arr.map(function(v) { return v === undefined ? null : v; });
+      }
+    });
+  });
+  var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  return window.location.origin + window.location.pathname + '#' + encoded;
+}
 // SUBMIT RESULTS TO BACKEND
 // ══════════════════════════════════════════════
 async function submitResults() {
@@ -2301,7 +2318,8 @@ async function submitResults() {
       dim05: scores.eco.pct,
       overall: avg,
       rag: avg < 40 ? 'Red' : avg < 70 ? 'Amber' : 'Green',
-      answers: answerDetails
+      answers: answerDetails,
+      reportUrl: generateReportUrl()
     };
 
     const response = await fetch('/api/submit', {
@@ -2342,6 +2360,40 @@ function downloadReport() {
     window.print();
   }, 250);
 }
+
+
+// ══════════════════════════════════════════════
+// AUTO-RESTORE REPORT FROM URL HASH
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function() {
+  if (window.location.hash && window.location.hash.length > 2) {
+    try {
+      var raw = window.location.hash.slice(1);
+      var json = decodeURIComponent(escape(atob(raw)));
+      var data = JSON.parse(json);
+      S.company = data.c || '';
+      S.name = data.n || '';
+      S.role = data.r || '';
+      S.model = data.m || null;
+      S.persona = data.p || 'treasurer';
+      if (data.a) {
+        DKEYS.forEach(function(k) {
+          if (data.a[k]) {
+            S.answers[k] = {};
+            Object.keys(data.a[k]).forEach(function(sub) {
+              S.answers[k][sub] = data.a[k][sub].map(function(v) {
+                return v === null ? undefined : v;
+              });
+            });
+          }
+        });
+      }
+      generateReport();
+    } catch(e) {
+      console.error('Could not restore report from URL:', e);
+    }
+  }
+});
 
 </script>
 </body>
