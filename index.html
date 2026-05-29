@@ -2278,10 +2278,9 @@ async function submitResults() {
 
   try {
     const scores = getScores();
-    const avg = Math.round(
-      Object.values(scores).reduce((a, s) => a + s.pct, 0) / DKEYS.length
-    );
-
+    const wt = WEIGHTS[S.model] || WEIGHTS['enterprise'];
+    const avg = Math.round(DKEYS.reduce((a,k) => a + scores[k].pct * (wt[k] || 16), 0) / 100)
+    
     // Gather individual question-level answers
     const answerDetails = [];
     DKEYS.forEach(dimId => {
