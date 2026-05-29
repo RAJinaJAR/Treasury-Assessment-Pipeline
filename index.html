@@ -67,7 +67,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .fi:focus,.fs:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
 .fi::placeholder{color:var(--muted)}
 .sw{position:relative}.sw::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--gold);pointer-events:none;font-size:12px}
-.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:36px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
 .mc{background:var(--card);border:2px solid var(--border);border-radius:7px;padding:20px;cursor:pointer;transition:all .2s;position:relative}
 .mc:hover{border-color:rgba(201,168,76,.35)}
 .mc.sel{border-color:var(--gold);background:rgba(201,168,76,.05)}
@@ -76,7 +76,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .mn{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2}
 .md{font-size:11px;color:var(--muted);line-height:1.5}
 .mf{margin-top:10px;font-size:10px;color:var(--teal);font-weight:500}
-.ffoot{display:flex;justify-content:flex-end}
+.ffoot{display:flex;justify-content:center}
 
 /* ── ASSESSMENT SHELL ── */
 #s-assess{flex-direction:row;min-height:100vh}
@@ -239,7 +239,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .rl-name{font-size:12px;color:var(--text);font-weight:500}
 .rl-score{font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:auto;padding-left:12px}
 .rl-score.red{color:#ef4444}.rl-score.amber{color:#f59e0b}.rl-score.green{color:#10b981}
-.regime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.regime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
 .regime-card{background:var(--card2,#121a2e);border:1px solid var(--border);border-radius:6px;padding:14px;position:relative;overflow:hidden}
 .regime-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .rc-red::before{background:#ef4444}
@@ -377,9 +377,12 @@ h1 em{font-style:italic;color:var(--gold)}
       <div class="mc" onclick="pickModel(this,'enterprise')"><div class="mt">Large Corp</div><div class="mn">Enterprise Treasury</div><div class="md">Large corporates with centralised group treasury managing complex multi-entity, multi-currency operations.</div><div class="mf">Focus: Coordination, ERP, M&A readiness</div></div>
       <div class="mc" onclick="pickModel(this,'group')"><div class="mt">Multi-Entity</div><div class="mn">Group Treasury</div><div class="md">Group or regional treasury functions serving multiple subsidiaries, often with a shared service centre model.</div><div class="mf">Focus: Visibility, consolidation, intercompany</div></div>
       <div class="mc" onclick="pickModel(this,'portfolio')"><div class="mt">PE / Funds</div><div class="mn">Portfolio Treasury</div><div class="md">Private equity firms and holding companies managing treasury across a dynamic portfolio of companies.</div><div class="mf">Focus: Capital readiness, deal speed, board reporting</div></div>
-      <div class="mc" onclick="pickModel(this,'whitelabel')"><div class="mt">Bank / Inst</div><div class="mn">White-Label Treasury</div><div class="md">Banks and financial institutions offering treasury management services to corporate clients.</div><div class="mf">Focus: Client onboarding, compliance, multi-tenancy</div></div>
-      <div class="mc" onclick="pickModel(this,'embedded')"><div class="mt">Fintech</div><div class="mn">Embedded Treasury</div><div class="md">Fintech platforms and payments companies where treasury functions are built into operating infrastructure.</div><div class="mf">Focus: API-first, real-time, regulatory capital</div></div>
-    </div>
+      <div class="mc" onclick="pickModel(this,'commodity')"><div class="mt">Commodity</div><div class="mn">Commodity Treasury</div><div class="md">Commodity trading and energy companies managing treasury across physical and financial markets.</div><div class="mf">Focus: Margin, settlement, commodity risk</div></div>
+      <div class="mc" onclick="pickModel(this,'midmarket')"><div class="mt">Mid-Market</div><div class="mn">Mid-Market Treasury</div><div class="md">Growing businesses building treasury capability as they scale from domestic to multi-entity, multi-currency.</div><div class="mf">Focus: Scalability, controls, growth readiness</div></div>
+      <div class="mc" onclick="pickModel(this,'bankfi')"><div class="mt">Bank / FI</div><div class="mn">Banks & FIs</div><div class="md">Banks and financial institutions managing treasury across regulatory, ALM, and capital requirements.</div><div class="mf">Focus: ALM, regulatory capital, intraday liquidity</div></div>
+      <div class="mc" onclick="pickModel(this,'digital')"><div class="mt">Digital</div><div class="mn">Digital Treasury</div><div class="md">Fintech platforms and payments companies where treasury functions are built into operating infrastructure.</div><div class="mf">Focus: API-first, real-time, regulatory capital</div></div>
+      <div class="mc" onclick="pickModel(this,'whitelabel')"><div class="mt">White-Label</div><div class="mn">White-Label Treasury</div><div class="md">Institutions offering treasury management services to corporate clients on a platform basis.</div><div class="mf">Focus: Client onboarding, compliance, multi-tenancy</div></div>
+    </div></div>
     <div class="ffoot">
       <button class="btn-next" id="setup-btn" onclick="startAssessment()" disabled>
         Start Assessment
@@ -489,6 +492,73 @@ const DIMS = [
   {id:'eco',        num:'05', name:'Ecosystem Scale',      sub:'Group Treasury with Multiple Entities', color:'#10b981', tagClass:'d5'},
 ];
 const DKEYS = DIMS.map(d=>d.id);
+const WEIGHTS = {
+  "enterprise": {
+    "priorities": 10,
+    "daily": 20,
+    "vol": 18,
+    "shock": 22,
+    "strat": 18,
+    "eco": 12
+  },
+  "group": {
+    "priorities": 10,
+    "daily": 20,
+    "vol": 18,
+    "shock": 22,
+    "strat": 18,
+    "eco": 12
+  },
+  "portfolio": {
+    "priorities": 10,
+    "daily": 18,
+    "vol": 18,
+    "shock": 22,
+    "strat": 22,
+    "eco": 10
+  },
+  "commodity": {
+    "priorities": 10,
+    "daily": 22,
+    "vol": 24,
+    "shock": 20,
+    "strat": 12,
+    "eco": 12
+  },
+  "midmarket": {
+    "priorities": 12,
+    "daily": 24,
+    "vol": 16,
+    "shock": 18,
+    "strat": 16,
+    "eco": 14
+  },
+  "bankfi": {
+    "priorities": 10,
+    "daily": 20,
+    "vol": 20,
+    "shock": 22,
+    "strat": 16,
+    "eco": 12
+  },
+  "digital": {
+    "priorities": 10,
+    "daily": 22,
+    "vol": 18,
+    "shock": 20,
+    "strat": 18,
+    "eco": 12
+  },
+  "whitelabel": {
+    "priorities": 10,
+    "daily": 18,
+    "vol": 18,
+    "shock": 22,
+    "strat": 20,
+    "eco": 12
+  }
+};
+
 
 // ══════════════════════════════════════════════
 // QUESTIONS — per persona per dimension
@@ -496,298 +566,1138 @@ const DKEYS = DIMS.map(d=>d.id);
 // 'base' = shown to all; persona-specific shown in addition
 // ══════════════════════════════════════════════
 const QS = {
-
-  // ── DIMENSION 00: STRATEGIC PRIORITIES (persona-specific) ──
   priorities: {
     cfo: [
-      {t:"What is your single most important treasury priority for the next 12 months?", risk:"high", opts:[
-        {l:"Reducing financing costs and improving capital efficiency",s:1},
-        {l:"Gaining real-time visibility across our full cash and risk position",s:1},
-        {l:"Positioning treasury to support a major strategic event (M&A, IPO, expansion)",s:1},
-        {l:"Managing our way through macro uncertainty — rates, FX, liquidity",s:1}
-      ]},
-      {t:"Over the next 3–5 years, which growth agenda is most relevant to your organisation?", risk:"high", opts:[
-        {l:"Organic growth — expanding existing operations into new markets or products",s:1},
-        {l:"Acquisitive growth — we expect to make significant acquisitions",s:1},
-        {l:"Capital return — we're in harvest mode, optimising for return to shareholders",s:1},
-        {l:"Defensive consolidation — managing through a difficult cycle",s:1}
-      ]},
-      {t:"How confident are you that your current treasury function can support your organisation at its next stage of growth?", risk:"high", opts:[
-        {l:"Not confident — we would need significant investment to get treasury ready",s:0},
-        {l:"Somewhat confident — we have the basics but gaps would emerge under pressure",s:1},
-        {l:"Mostly confident — treasury is solid but not yet fully strategic",s:1},
-        {l:"Very confident — treasury is already positioned as a capital governance function",s:2}
-      ]},
-      {t:"What is your single biggest challenge in treasury today?", risk:"high", opts:[
-        {l:"Lack of real-time visibility — I'm always working with yesterday's data",s:0},
-        {l:"Too much manual work — my team is consumed by execution, not analysis",s:0},
-        {l:"Disconnected systems — data lives in too many places",s:0},
-        {l:"Board and CFO expectations are rising — treasury needs to do more with less",s:0}
-      ]},
-      {t:"When the board asks about capital allocation, how quickly can your treasury function provide a clear, accurate picture?", risk:"medium", opts:[
-        {l:"Days — it requires significant manual compilation",s:0},
-        {l:"Hours — standard reports exist but require some manual work",s:1},
-        {l:"Immediately — live dashboard available on demand",s:2}
-      ]},
-      {t:"How is cost reduction currently factored into your treasury agenda?", risk:"medium", opts:[
-        {l:"Not actively — treasury cost is not a current focus",s:0},
-        {l:"Informally — we look for savings but there's no structured programme",s:1},
-        {l:"Actively — we have a treasury efficiency programme with measurable targets",s:2}
-      ]},
+      {t:"What is your single most important treasury priority for the next 12 months?", risk:"high", opts:[{l:"Reducing financing costs and improving capital efficiency",s:0},
+          {l:"Gaining real-time visibility across our full cash and risk position",s:1},
+          {l:"Positioning treasury to support a major strategic event (M&A, IPO, expansion)",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Over the next 3–5 years, which growth agenda is most relevant to your organisation?", risk:"high", opts:[{l:"Organic growth — expanding existing operations into new markets",s:0},
+          {l:"Acquisitive growth — we expect to make significant acquisitions",s:1},
+          {l:"Capital return — optimising for return to shareholders",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How confident are you that treasury can support the organisation at its next stage of growth?", risk:"high", opts:[{l:"Not confident — we would need significant investment to get treasury ready",s:0},
+          {l:"Somewhat confident — we have the basics but gaps would emerge under pressure",s:1},
+          {l:"Very confident — treasury is already positioned as a capital governance function",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"What is your biggest challenge in treasury today?", risk:"high", opts:[{l:"Lack of real-time visibility — I\'m always working with yesterday\'s data",s:0},
+          {l:"Too much manual work — my team is consumed by execution, not analysis",s:1},
+          {l:"Disconnected systems — data lives in too many places",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When the board asks about capital allocation, how quickly can treasury provide a clear picture?", risk:"medium", opts:[{l:"Days — requires significant manual compilation",s:0},
+          {l:"Hours — standard reports exist but require some manual work",s:1},
+          {l:"Immediately — live dashboard available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is cost reduction currently factored into your treasury agenda?", risk:"medium", opts:[{l:"Not actively — treasury cost is not a current focus",s:0},
+          {l:"Informally — we look for savings but there\'s no structured programme",s:1},
+          {l:"Actively — we have a treasury efficiency programme with measurable targets",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
     ],
     treasurer: [
-      {t:"What is your most pressing operational priority for the next 12 months?", risk:"high", opts:[
-        {l:"Improving cash visibility and forecasting accuracy",s:1},
-        {l:"Reducing manual processes and increasing automation",s:1},
-        {l:"Strengthening our risk management framework (FX, rates, counterparty)",s:1},
-        {l:"Upgrading or replacing our TMS / core treasury technology",s:1}
-      ]},
-      {t:"Looking ahead 3–5 years, which capability gap concerns you most?", risk:"high", opts:[
-        {l:"Group liquidity visibility — we don't have a consolidated real-time picture",s:0},
-        {l:"FX and rate risk management — our hedging programme needs to be more systematic",s:0},
-        {l:"Entity scalability — we need to support more subsidiaries without adding headcount",s:0},
-        {l:"Strategic positioning — treasury needs to be seen as a capital governance function",s:0}
-      ]},
-      {t:"How confident are you in your treasury function's ability to handle a major stress event today?", risk:"high", opts:[
-        {l:"Not confident — we would be reactive and vulnerable",s:0},
-        {l:"Partially confident — we could manage but it would be very difficult",s:1},
-        {l:"Mostly confident — we have plans but they haven't been tested",s:1},
-        {l:"Very confident — we have tested playbooks and real-time crisis tooling",s:2}
-      ]},
-      {t:"What is your biggest day-to-day frustration in running the treasury function?", risk:"high", opts:[
-        {l:"Cash positioning takes too long and isn't accurate enough",s:0},
-        {l:"Too many manual reconciliations and spreadsheet workarounds",s:0},
-        {l:"I don't have enough visibility across all our entities and currencies",s:0},
-        {l:"Reporting to the CFO/board is too time-consuming to build",s:0}
-      ]},
-      {t:"How well does your current technology stack support the demands placed on your team?", risk:"medium", opts:[
-        {l:"Poorly — we're working around our systems rather than with them",s:0},
-        {l:"Partially — some tools work well but there are significant gaps",s:1},
-        {l:"Well — our systems handle the core and we're extending capability",s:2}
-      ]},
-      {t:"How much of your team's time is spent on execution (reconciliation, payments, reporting) vs. analysis and risk management?", risk:"medium", opts:[
-        {l:"Mostly execution — over 70% of time is operational",s:0},
-        {l:"Mixed — roughly 50/50 between execution and analysis",s:1},
-        {l:"Mostly analytical — systems handle execution, team focuses on insight",s:2}
-      ]},
+      {t:"What is your most pressing operational priority for the next 12 months?", risk:"high", opts:[{l:"Improving cash visibility and forecasting accuracy",s:0},
+          {l:"Reducing manual processes and increasing automation",s:1},
+          {l:"Upgrading or replacing our TMS / core treasury technology",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Looking ahead 3–5 years, which capability gap concerns you most?", risk:"high", opts:[{l:"Group liquidity visibility — we don\'t have a consolidated real-time picture",s:0},
+          {l:"FX and rate risk management — our hedging programme needs to be more systematic",s:1},
+          {l:"Strategic positioning — treasury needs to be seen as a capital governance function",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How confident are you in treasury's ability to handle a major stress event today?", risk:"high", opts:[{l:"Not confident — we would be reactive and vulnerable",s:0},
+          {l:"Partially confident — we could manage but it would be very difficult",s:1},
+          {l:"Very confident — we have tested playbooks and real-time crisis tooling",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"What is your biggest day-to-day frustration in running the treasury function?", risk:"high", opts:[{l:"Cash positioning takes too long and isn\'t accurate enough",s:0},
+          {l:"Too many manual reconciliations and spreadsheet workarounds",s:1},
+          {l:"Reporting to the CFO/board is too time-consuming to build",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How well does your current technology stack support the demands placed on your team?", risk:"medium", opts:[{l:"Poorly — we\'re working around our systems rather than with them",s:0},
+          {l:"Partially — some tools work well but there are significant gaps",s:1},
+          {l:"Well — our systems handle the core and we\'re extending capability",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How much of your team's time is spent on execution vs. analysis and risk management?", risk:"medium", opts:[{l:"Mostly execution — over 70% of time is operational",s:0},
+          {l:"Mixed — roughly 50/50 between execution and analysis",s:1},
+          {l:"Mostly analytical — systems handle execution, team focuses on insight",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
     ],
     manager: [
-      {t:"What technology or process improvement would have the biggest impact on your team's productivity?", risk:"high", opts:[
-        {l:"Automated bank reconciliation and straight-through processing",s:1},
-        {l:"Real-time cash positioning across all our accounts and entities",s:1},
-        {l:"Better integration between our TMS and ERP / accounting systems",s:1},
-        {l:"Automated reporting — eliminating manual board pack production",s:1}
-      ]},
-      {t:"What does your team spend most of its time on today?", risk:"high", opts:[
-        {l:"Manual data gathering and reconciliation from multiple sources",s:0},
-        {l:"Building and updating spreadsheet models for cash and risk",s:0},
-        {l:"Chasing information from subsidiaries and business units",s:0},
-        {l:"Analysis, forecasting, and strategic support",s:2}
-      ]},
-      {t:"How confident are you that your treasury processes would survive a key person leaving?", risk:"high", opts:[
-        {l:"Not confident — critical processes are in people's heads, not in systems",s:0},
-        {l:"Partially — some processes are documented but key dependencies remain",s:1},
-        {l:"Confident — processes are systemised and documented end-to-end",s:2}
-      ]},
-      {t:"What is your biggest challenge in delivering accurate cash forecasts?", risk:"high", opts:[
-        {l:"Data arrives too late or in inconsistent formats from the business",s:0},
-        {l:"We don't have a proper forecasting tool — it's done in Excel",s:0},
-        {l:"Our TMS forecasting module doesn't connect well to actuals",s:0},
-        {l:"Forecasting accuracy is good — this is not our main challenge",s:2}
-      ]},
-      {t:"How quickly can you respond when the treasurer asks for an ad hoc analysis?", risk:"medium", opts:[
-        {l:"Hours or more — I need to manually compile data from multiple sources",s:0},
-        {l:"30–60 minutes — data is accessible but needs manual structuring",s:1},
-        {l:"Minutes — I have dashboards and data ready to cut on demand",s:2}
-      ]},
-      {t:"How much time does your team spend on system administration and data cleanup vs. treasury work?", risk:"medium", opts:[
-        {l:"Too much — system maintenance and data issues consume significant capacity",s:0},
-        {l:"Some — it's manageable but a distraction from core treasury work",s:1},
-        {l:"Minimal — our systems are stable and data quality is high",s:2}
-      ]},
+      {t:"What technology or process improvement would have the biggest impact on your team's productivity?", risk:"high", opts:[{l:"Automated bank reconciliation and straight-through processing",s:0},
+          {l:"Real-time cash positioning across all our accounts and entities",s:1},
+          {l:"Automated reporting — eliminating manual board pack production",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"What does your team spend most of its time on today?", risk:"high", opts:[{l:"Manual data gathering and reconciliation from multiple sources",s:0},
+          {l:"Building and updating spreadsheet models for cash and risk",s:1},
+          {l:"Analysis, forecasting, and strategic support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How confident are you that treasury processes would survive a key person leaving?", risk:"high", opts:[{l:"Not confident — critical processes are in people\'s heads, not in systems",s:0},
+          {l:"Partially — some processes are documented but key dependencies remain",s:1},
+          {l:"Confident — processes are systemised and documented end-to-end",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"What is your biggest challenge in delivering accurate cash forecasts?", risk:"high", opts:[{l:"Data arrives too late or in inconsistent formats from the business",s:0},
+          {l:"We don\'t have a proper forecasting tool — it\'s done in Excel",s:1},
+          {l:"Forecasting accuracy is good — this is not our main challenge",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you respond when asked for an ad hoc analysis?", risk:"medium", opts:[{l:"Hours or more — I need to manually compile data from multiple sources",s:0},
+          {l:"30–60 minutes — data is accessible but needs manual structuring",s:1},
+          {l:"Minutes — I have dashboards and data ready to cut on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How much time does your team spend on system administration vs. treasury work?", risk:"medium", opts:[{l:"Too much — system maintenance and data issues consume significant capacity",s:0},
+          {l:"Some — it\'s manageable but a distraction from core treasury work",s:1},
+          {l:"Minimal — our systems are stable and data quality is high",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
     ],
   },
-
-  // ── DIMENSION 01: DAILY OPERATIONS ──
   daily: {
-    base: [
-      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[
-        {l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
-        {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
-        {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2}
-      ]},
-      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[
-        {l:"Same day or next day — significant manual effort required",s:0},
-        {l:"Within 2–4 hours with some manual intervention",s:1},
-        {l:"Real-time or near real-time, fully automated",s:2}
-      ]},
-      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[
-        {l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
-        {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
-        {l:"Fully automated — transactions matched and reconciled without manual input",s:2}
-      ]},
-      {t:"How does your team handle intercompany loans, netting, and settlements?", risk:"medium", opts:[
-        {l:"Tracked in spreadsheets — no systematic netting or in-house bank",s:0},
-        {l:"Partially managed in TMS — some netting capability but limited automation",s:1},
-        {l:"Full in-house bank and netting centre — automated settlement and position tracking",s:2}
-      ]},
-      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[
-        {l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
-        {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
-        {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2}
-      ]},
-      {t:"How does your treasury manage bank relationship administration (KYC, account openings, signatory updates)?", risk:"low", opts:[
-        {l:"Entirely manual — tracked in spreadsheets or email, no centralised system",s:0},
-        {l:"Partially systemised — some records in TMS but significant manual administration",s:1},
-        {l:"Fully centralised — digital workflows, audit trail, automated renewal tracking",s:2}
-      ]},
-    ]
+    enterprise: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage intercompany loans, netting, and settlements?", risk:"medium", opts:[{l:"Tracked in spreadsheets — no systematic netting or in-house bank",s:0},
+          {l:"Partially managed in TMS — some netting capability but limited automation",s:1},
+          {l:"Full in-house bank and netting centre — automated settlement and position tracking",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage bank relationship administration (KYC, account openings, signatory updates)?", risk:"low", opts:[{l:"Entirely manual — tracked in spreadsheets or email, no centralised system",s:0},
+          {l:"Partially systemised — some records in TMS but significant manual administration",s:1},
+          {l:"Fully centralised — digital workflows, audit trail, automated renewal tracking",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    group: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage intercompany loans, netting, and settlements across entities?", risk:"medium", opts:[{l:"Tracked in spreadsheets — no systematic netting or in-house bank",s:0},
+          {l:"Partially managed in TMS — some netting capability but limited automation",s:1},
+          {l:"Full in-house bank and netting centre — automated settlement and position tracking",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury coordinate with shared service centres across the group?", risk:"low", opts:[{l:"Minimal coordination — SSC and treasury operate independently",s:0},
+          {l:"Some alignment — regular meetings but no system integration",s:1},
+          {l:"Fully integrated — shared platform, common data, unified controls",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    portfolio: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support portfolio company cash visibility and control?", risk:"high", opts:[{l:"Each portfolio company manages cash independently — no group oversight",s:0},
+          {l:"Periodic reporting from portfolio companies — consolidated manually",s:1},
+          {l:"Real-time dashboard across all portfolio companies, automated consolidation",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are intercompany positions and dividends managed across portfolio entities?", risk:"medium", opts:[{l:"Ad hoc — handled case by case without a systematic framework",s:0},
+          {l:"Periodic review — tracked in spreadsheets, settled quarterly",s:1},
+          {l:"Automated intercompany management with real-time position tracking",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    commodity: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury integrate with trading operations for daily settlement?", risk:"high", opts:[{l:"Manual — treasury receives settlement instructions by email from trading desks",s:0},
+          {l:"Partial integration — some automated feeds but manual reconciliation required",s:1},
+          {l:"Fully integrated — ETRM/CTRM connected to TMS with automated settlement and position matching",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are commodity margin calls and variation margin managed on a daily basis?", risk:"high", opts:[{l:"Manually — treasury receives calls and arranges funding reactively",s:0},
+          {l:"Partially automated — margin requirements tracked in TMS but funding is manual",s:1},
+          {l:"Fully automated — margin calls trigger automated funding from pre-arranged facilities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    midmarket: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage cash across multiple bank accounts and entities as the business scales?", risk:"high", opts:[{l:"Spreadsheets and manual bank log-ins — we check each account separately",s:0},
+          {l:"Some automation — a few accounts feed into our ERP or basic TMS",s:1},
+          {l:"Consolidated view — all accounts visible in real-time through our TMS or bank platform",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are payments and approvals managed across the business?", risk:"medium", opts:[{l:"Email and phone — payments initiated locally, approval chain is informal",s:0},
+          {l:"Basic workflow — some approval controls in place but not fully automated",s:1},
+          {l:"Structured payment workflow — dual controls, automated approval routing, full audit trail",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    bankfi: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage intraday liquidity and real-time settlement obligations?", risk:"high", opts:[{l:"Monitored manually — team tracks RTGS and correspondent flows throughout the day",s:0},
+          {l:"Partially automated — some intraday monitoring but manual intervention required",s:1},
+          {l:"Fully automated — real-time intraday liquidity monitoring integrated with settlement systems",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are internal funding transactions between business lines managed and settled?", risk:"medium", opts:[{l:"Ad hoc — internal funding arranged informally between treasury and business lines",s:0},
+          {l:"Partially structured — internal transfer pricing exists but settlement is manual",s:1},
+          {l:"Fully automated — internal funding platform with transfer pricing, automated settlement and audit trail",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    digital: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage real-time cash flows from payment volumes?", risk:"high", opts:[{l:"Manually — treasury tracks flows from payment reports with a lag",s:0},
+          {l:"Partially automated — some API feeds but cash position requires manual reconciliation",s:1},
+          {l:"Fully real-time — treasury system receives live payment flow data with automated positioning",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are client funds, operational cash, and regulatory capital accounts segregated and monitored?", risk:"high", opts:[{l:"Manual monitoring — segregation tracked in spreadsheets and checked periodically",s:0},
+          {l:"Partially systemised — accounts are segregated but monitoring is not fully automated",s:1},
+          {l:"Fully automated — real-time segregation monitoring with automated breach alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    whitelabel: [
+      {t:"How does your treasury team currently manage daily cash positioning?", risk:"high", opts:[{l:"Manual — spreadsheets, email confirmations, and phone calls with banks",s:0},
+          {l:"Partially automated — TMS handles some banks but manual workarounds remain",s:1},
+          {l:"Fully automated — real-time cash positioning across all accounts and entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can you produce an accurate group-wide cash position?", risk:"high", opts:[{l:"Same day or next day — significant manual effort required",s:0},
+          {l:"Within 2–4 hours with some manual intervention",s:1},
+          {l:"Real-time or near real-time, fully automated",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are bank account transactions reconciled in your treasury function?", risk:"medium", opts:[{l:"Manually — treasury team reconciles against bank statements daily or weekly",s:0},
+          {l:"Partially automated — some accounts reconcile automatically, others manually",s:1},
+          {l:"Fully automated — transactions matched and reconciled without manual input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is treasury reporting generated for the CFO and board?", risk:"medium", opts:[{l:"Manual — finance team builds reports in Excel before each board cycle",s:0},
+          {l:"Semi-automated — data pulled from TMS into template, formatted manually",s:1},
+          {l:"Automated dashboards — live data, drill-down capability, no manual build required",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage cash positions across client entities on your platform?", risk:"high", opts:[{l:"Each client entity is managed separately — no consolidated view",s:0},
+          {l:"Partial consolidation — major clients visible, others managed manually",s:1},
+          {l:"Full consolidated visibility — real-time position across all client entities on a single platform",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are client onboarding and treasury infrastructure setup managed?", risk:"medium", opts:[{l:"Manual project — each client onboarding is a bespoke, resource-intensive process",s:0},
+          {l:"Partially standardised — templates exist but significant manual configuration remains",s:1},
+          {l:"Fully standardised — modular onboarding framework, automated setup, client live within days",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
   },
-
-  // ── DIMENSION 02: STRUCTURAL VOLATILITY ──
   vol: {
-    base: [
-      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[
-        {l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
-        {l:"Within the hour — semi-automated with some manual data gathering",s:1},
-        {l:"In real-time — automated exposure aggregation with instant alerting",s:2}
-      ]},
-      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[
-        {l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
-        {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
-        {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2}
-      ]},
-      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[
-        {l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
-        {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
-        {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2}
-      ]},
-      {t:"When market conditions shift, how long does it take to model the impact on your funding costs and liquidity?", risk:"medium", opts:[
-        {l:"Days — requires manual modelling in Excel by a specialist",s:0},
-        {l:"Same day — standard templates available, requires some manual input",s:1},
-        {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2}
-      ]},
-      {t:"How does your treasury monitor and manage counterparty credit risk?", risk:"medium", opts:[
-        {l:"Limited — bank and counterparty exposure tracked sporadically or not at all",s:0},
-        {l:"Basic limits — counterparty limits set but monitored manually, no real-time alerting",s:1},
-        {l:"Active management — automated limit monitoring, real-time breach alerts, integrated ratings feeds",s:2}
-      ]},
-      {t:"Can you run stress scenarios on your liquidity position in response to a sudden market move?", risk:"high", opts:[
-        {l:"No — scenario analysis is not a current capability",s:0},
-        {l:"Partially — basic stress scenarios exist in Excel, run infrequently",s:1},
-        {l:"Yes — on-demand scenario modelling with multiple stress parameters and live data",s:2}
-      ]},
-    ]
+    enterprise: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury monitor and manage counterparty credit risk?", risk:"medium", opts:[{l:"Limited — bank and counterparty exposure tracked sporadically or not at all",s:0},
+          {l:"Basic limits — counterparty limits set but monitored manually, no real-time alerting",s:1},
+          {l:"Active management — automated limit monitoring, real-time breach alerts, integrated ratings feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Can you run stress scenarios on your liquidity position in response to a sudden market move?", risk:"high", opts:[{l:"No — scenario analysis is not a current capability",s:0},
+          {l:"Partially — basic stress scenarios exist in Excel, run infrequently",s:1},
+          {l:"Yes — on-demand scenario modelling with multiple stress parameters and live data",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    group: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury monitor and manage counterparty credit risk across entities?", risk:"medium", opts:[{l:"Limited — counterparty exposure tracked sporadically at entity level",s:0},
+          {l:"Basic limits — limits set centrally but monitored manually",s:1},
+          {l:"Active management — automated limit monitoring across all entities with real-time breach alerts",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Can you run consolidated stress scenarios across the full group liquidity position?", risk:"high", opts:[{l:"No — group-level scenario analysis is not a current capability",s:0},
+          {l:"Partially — basic scenarios possible but require manual consolidation",s:1},
+          {l:"Yes — on-demand group stress modelling with live consolidated data",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    portfolio: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does portfolio treasury manage FX exposure across portfolio companies in different currencies?", risk:"high", opts:[{l:"Each portfolio company manages FX independently — no group netting or coordination",s:0},
+          {l:"Central awareness — group knows about major exposures but hedging is entity-level",s:1},
+          {l:"Coordinated hedging — group treasury nets exposures across portfolio and hedges centrally",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate exposure managed across the portfolio's debt stack?", risk:"high", opts:[{l:"Managed deal by deal — no consolidated view of portfolio interest rate exposure",s:0},
+          {l:"Partially consolidated — major facilities tracked but exposure modelling is manual",s:1},
+          {l:"Fully consolidated — portfolio-wide rate sensitivity with integrated hedging and live modelling",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    commodity: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage commodity price exposure — mark-to-market, VaR, and position limits?", risk:"high", opts:[{l:"Commodity risk managed by trading desk independently — treasury has limited visibility",s:0},
+          {l:"Treasury receives daily position reports from trading — exposure reviewed manually",s:1},
+          {l:"Integrated commodity risk management — treasury and trading share a live position and risk platform",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is basis risk — between physical commodity prices and financial hedge instruments — managed?", risk:"high", opts:[{l:"Not systematically managed — basis risk surfaces as a P&L variance at settlement",s:0},
+          {l:"Tracked manually — basis exposure monitored periodically by risk team",s:1},
+          {l:"Automated basis risk monitoring — integrated into daily risk reporting with scenario analysis",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    midmarket: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your business manage FX risk as you expand internationally?", risk:"high", opts:[{l:"We invoice in our home currency — FX risk sits with customers",s:0},
+          {l:"We have some FX exposure but manage it reactively through natural hedges or spot transactions",s:1},
+          {l:"We have a formal FX policy with structured hedging and regular review",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How do you manage interest rate exposure on your existing debt facilities?", risk:"medium", opts:[{l:"We accept floating rate exposure — interest rate risk is not actively managed",s:0},
+          {l:"We have fixed/floating mix but review rate exposure infrequently",s:1},
+          {l:"We actively manage our rate exposure with a formal hedging strategy reviewed quarterly",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    bankfi: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage structural interest rate risk across the balance sheet (ALM)?", risk:"high", opts:[{l:"ALM is managed by risk — treasury has limited integration with balance sheet rate exposure",s:0},
+          {l:"Regular ALM review — treasury participates in ALCO but monitoring is largely manual",s:1},
+          {l:"Integrated ALM — treasury operates dynamic hedging with real-time balance sheet rate sensitivity",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is liquidity risk managed under regulatory requirements (LCR, NSFR, or equivalent)?", risk:"high", opts:[{l:"Regulatory liquidity ratios are monitored by risk/compliance — treasury has limited visibility",s:0},
+          {l:"Treasury monitors LCR/NSFR periodically but reporting is manual and not real-time",s:1},
+          {l:"Automated regulatory liquidity monitoring — daily LCR/NSFR with live stress testing and reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    digital: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage the volatility of transaction volumes and associated liquidity needs?", risk:"high", opts:[{l:"Reactively — we top up liquidity when balances run low",s:0},
+          {l:"Partially — we model expected volumes but intraday liquidity is not fully automated",s:1},
+          {l:"Proactively — real-time volume monitoring with automated liquidity buffers and pre-arranged facilities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How do you manage exposure to crypto or digital asset volatility if relevant to your business?", risk:"medium", opts:[{l:"Not applicable — we don\'t hold digital assets on balance sheet",s:0},
+          {l:"Monitored manually — digital asset positions reviewed periodically",s:1},
+          {l:"Actively managed — digital asset exposure within defined limits with automated monitoring",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    whitelabel: [
+      {t:"When FX rates move significantly, how quickly can treasury identify and quantify your exposure?", risk:"high", opts:[{l:"Hours or days — exposure is calculated manually across multiple sources",s:0},
+          {l:"Within the hour — semi-automated with some manual data gathering",s:1},
+          {l:"In real-time — automated exposure aggregation with instant alerting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX hedging strategy and execution?", risk:"high", opts:[{l:"Reactive — hedges placed when exposure is flagged by business units",s:0},
+          {l:"Periodic policy — hedging programme exists but execution is manual and infrequent",s:1},
+          {l:"Systematic — automated hedge proposals based on live exposure, integrated with FX platforms",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How is interest rate risk measured and managed across your funding portfolio?", risk:"high", opts:[{l:"Limited visibility — rate exposure reviewed ad hoc or at refinancing events only",s:0},
+          {l:"Periodic review — rate risk measured quarterly, some hedging in place",s:1},
+          {l:"Active monitoring — rate sensitivity dashboards, scenario modelling, integrated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"When market conditions shift, how long does it take to model the impact on your funding costs?", risk:"medium", opts:[{l:"Days — requires manual modelling in Excel by a specialist",s:0},
+          {l:"Same day — standard templates available, requires some manual input",s:1},
+          {l:"Minutes — scenario modelling built into TMS with live market data feeds",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage FX and interest rate exposure arising from client treasury activity?", risk:"high", opts:[{l:"Client exposure is passed through — we don\'t actively manage it at platform level",s:0},
+          {l:"Partially managed — major client exposures aggregated and hedged periodically",s:1},
+          {l:"Fully managed — client exposures netted at platform level with automated hedging",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your platform manage the impact of client concentration risk on treasury liquidity?", risk:"high", opts:[{l:"Not systematically managed — large client flows are handled reactively",s:0},
+          {l:"Monitored — concentration limits exist but monitoring is manual",s:1},
+          {l:"Automated — real-time client concentration monitoring with pre-set liquidity buffers",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
   },
-
-  // ── DIMENSION 03: SHOCK EVENTS ──
   shock: {
-    base: [
-      {t:"If a major bank counterparty failed tomorrow, how quickly could you quantify your exposure and act?", risk:"high", opts:[
-        {l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
-        {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
-        {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2}
-      ]},
-      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[
-        {l:"No documented LCP — liquidity management is reactive",s:0},
-        {l:"LCP exists but has not been stress-tested or updated recently",s:1},
-        {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2}
-      ]},
-      {t:"In a severe liquidity stress event, how many days of liquidity runway can you immediately verify?", risk:"high", opts:[
-        {l:"Unclear — would require significant manual work to determine",s:0},
-        {l:"Approximate — can estimate within a range based on known facilities and balances",s:1},
-        {l:"Precise — automated liquidity runway calculator with live data and committed facility tracking",s:2}
-      ]},
-      {t:"How are your emergency credit facilities (RCF, bilateral lines) documented and monitored?", risk:"high", opts:[
-        {l:"Spreadsheet-based — facility details, covenants, and drawdown history tracked manually",s:0},
-        {l:"Partially in TMS — some facility data loaded but covenant monitoring is manual",s:1},
-        {l:"Fully systemised — all facilities in TMS, automated covenant tracking, utilisation alerts",s:2}
-      ]},
-      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[
-        {l:"No defined protocol — crisis communication handled ad hoc",s:0},
-        {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
-        {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2}
-      ]},
-      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[
-        {l:"No — operations would effectively halt without system access",s:0},
-        {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
-        {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2}
-      ]},
-    ]
+    enterprise: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"In a severe liquidity stress event, how many days of liquidity runway can you immediately verify?", risk:"high", opts:[{l:"Unclear — would require significant manual work to determine",s:0},
+          {l:"Approximate — can estimate within a range based on known facilities and balances",s:1},
+          {l:"Precise — automated liquidity runway calculator with live data and committed facility tracking",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are emergency credit facilities (RCF, bilateral lines) documented and monitored?", risk:"high", opts:[{l:"Spreadsheet-based — facility details, covenants, and drawdown history tracked manually",s:0},
+          {l:"Partially in TMS — some facility data loaded but covenant monitoring is manual",s:1},
+          {l:"Fully systemised — all facilities in TMS, automated covenant tracking, utilisation alerts",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    group: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How quickly can the group mobilise liquidity to a subsidiary facing a funding crisis?", risk:"high", opts:[{l:"Days — liquidity transfer requires board approval and manual bank instruction",s:0},
+          {l:"Hours — intercompany transfer process exists but requires manual steps",s:1},
+          {l:"Minutes — pre-approved intercompany facilities with same-day automated drawdown capability",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How are emergency credit facilities monitored across the full group entity structure?", risk:"high", opts:[{l:"Entity level only — each subsidiary monitors its own facilities",s:0},
+          {l:"Partially centralised — group has visibility of major facilities but not all entities",s:1},
+          {l:"Fully centralised — all facilities across all entities in TMS with automated covenant monitoring",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    portfolio: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If a portfolio company faces a liquidity crisis, how quickly can group treasury respond?", risk:"high", opts:[{l:"Days — would require assessment, board involvement, and manual bank arrangements",s:0},
+          {l:"Hours — pre-assessed liquidity options exist but execution is manual",s:1},
+          {l:"Minutes — pre-arranged standby facilities at portfolio level with clear escalation triggers",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage the risk of a fund-level liquidity event (capital call, LP redemption)?", risk:"high", opts:[{l:"Reactively — capital calls and redemptions handled as they arise",s:0},
+          {l:"Partially planned — timing modelled in advance but no automated liquidity buffer",s:1},
+          {l:"Proactively managed — liquidity ladder maintained with automated triggers and pre-positioned cash",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    commodity: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If a major commodity price spike triggers margin calls across multiple positions, how does treasury respond?", risk:"high", opts:[{l:"Reactively — calls are received and funding arranged manually on the day",s:0},
+          {l:"Partially prepared — pre-arranged facilities exist but drawdown is manual",s:1},
+          {l:"Fully prepared — automated margin call prediction, pre-positioned liquidity, same-day drawdown",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage the risk of a sudden supply disruption or counterparty default in physical markets?", risk:"high", opts:[{l:"Reactively — disruptions are assessed and managed as they occur",s:0},
+          {l:"Basic plans — contingency suppliers and alternative routes identified but not systemised",s:1},
+          {l:"Fully prepared — pre-mapped alternative supply chains, counterparty exposures monitored in real-time",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    midmarket: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your largest customer delayed payment by 60 days, how would treasury manage the resulting cash shortfall?", risk:"high", opts:[{l:"We would call our bank and hope for the best — no pre-arranged contingency",s:0},
+          {l:"We have an overdraft or revolving facility we could draw on, but it\'s not formally planned",s:1},
+          {l:"We have a documented liquidity contingency with pre-arranged facilities and clear drawdown triggers",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage covenant compliance on your banking facilities?", risk:"medium", opts:[{l:"Monitored at reporting dates — we find out at the same time as the bank",s:0},
+          {l:"Tracked manually — finance team monitors covenants monthly",s:1},
+          {l:"Automated — covenant headroom tracked in real-time with early warning alerts",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    bankfi: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage an intraday liquidity stress — e.g., a large unexpected payment obligation?", risk:"high", opts:[{l:"Reactively — the team identifies the shortfall and arranges funding manually",s:0},
+          {l:"Partially prepared — intraday credit lines exist but monitoring is manual",s:1},
+          {l:"Fully prepared — real-time intraday liquidity monitoring with automated facility drawdown",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your institution manage regulatory liquidity stress scenarios (LCR below minimum, NSFR breach)?", risk:"high", opts:[{l:"Reactively — regulatory breaches would be identified at reporting date",s:0},
+          {l:"Partially monitored — daily LCR estimated but not fully automated",s:1},
+          {l:"Fully automated — real-time LCR/NSFR monitoring with pre-defined recovery actions",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    digital: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your payment processing infrastructure suffered a major outage, how would treasury manage the liquidity impact?", risk:"high", opts:[{l:"No specific plan — we would manage reactively",s:0},
+          {l:"Basic plan — manual processes documented but not tested under outage conditions",s:1},
+          {l:"Fully tested BCP — payment outage scenario included in annual resilience testing with clear treasury response",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage the risk of a sudden spike in customer withdrawals or redemptions?", risk:"high", opts:[{l:"Reactively — we would draw on available facilities if balances run low",s:0},
+          {l:"Partially planned — liquidity buffer maintained but stress scenarios not formally modelled",s:1},
+          {l:"Fully prepared — real-time withdrawal monitoring with automated liquidity triggers and pre-positioned buffers",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    whitelabel: [
+      {t:"If a major bank counterparty failed, how quickly could you quantify exposure and act?", risk:"high", opts:[{l:"Days — exposure would need to be manually compiled across accounts and positions",s:0},
+          {l:"Hours — data available in TMS but manual aggregation required across some entities",s:1},
+          {l:"Minutes — automated counterparty exposure dashboard, instant alerting and action protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Does your treasury have a documented Liquidity Contingency Plan (LCP) tested in the last 12 months?", risk:"high", opts:[{l:"No documented LCP — liquidity management is reactive",s:0},
+          {l:"LCP exists but has not been stress-tested or updated recently",s:1},
+          {l:"Live LCP — documented, tested, with clear escalation triggers and playbooks",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function communicate and coordinate during a crisis event?", risk:"medium", opts:[{l:"No defined protocol — crisis communication handled ad hoc",s:0},
+          {l:"Basic protocol — escalation contacts documented but not regularly tested",s:1},
+          {l:"Rehearsed playbook — documented protocols, tested with simulations, clear ownership",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If your primary TMS or ERP system went offline for 48 hours, could treasury continue to operate?", risk:"medium", opts:[{l:"No — operations would effectively halt without system access",s:0},
+          {l:"Partially — manual backup processes exist but would be severely stretched",s:1},
+          {l:"Yes — documented BCP with manual fallback procedures tested and ready",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If a major client entity experienced a liquidity crisis, how would your platform respond?", risk:"high", opts:[{l:"Reactively — we would assess the situation and work with the client to find solutions",s:0},
+          {l:"Partially prepared — client credit limits and exposure monitored but response is manual",s:1},
+          {l:"Fully prepared — automated client exposure monitoring with pre-defined isolation and response protocols",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury protect the platform from contagion if one client defaults or faces regulatory action?", risk:"high", opts:[{l:"Client segregation maintained but contagion scenario not formally planned",s:0},
+          {l:"Basic isolation procedures exist but have not been stress-tested",s:1},
+          {l:"Fully tested — client isolation protocols included in annual resilience testing with clear treasury response",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
   },
-
-  // ── DIMENSION 04: STRATEGIC CAPITAL ──
   strat: {
-    base: [
-      {t:"When your CFO or board asks for an assessment of capital allocation options, how prepared is treasury?", risk:"high", opts:[
-        {l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
-        {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
-        {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2}
-      ]},
-      {t:"In the event of a potential M&A transaction, how quickly can treasury model funding requirements?", risk:"high", opts:[
-        {l:"Weeks — funding analysis needs to be built from scratch in Excel",s:0},
-        {l:"Days — standard models exist but significant manual work required for each deal",s:1},
-        {l:"Hours — integrated deal modelling capability with live balance sheet and facility data",s:2}
-      ]},
-      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[
-        {l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
-        {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
-        {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2}
-      ]},
-      {t:"How does your treasury function support dividend, buyback, or return of capital decisions?", risk:"medium", opts:[
-        {l:"Limited involvement — treasury is informed after decisions are made",s:0},
-        {l:"Advisory — treasury provides cash position data but not integrated into the decision process",s:1},
-        {l:"Strategic partner — treasury leads capital return analysis with live modelling and board input",s:2}
-      ]},
-      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[
-        {l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
-        {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
-        {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2}
-      ]},
-      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[
-        {l:"No — current setup would require significant restructuring to support major growth",s:0},
-        {l:"Partially — some capability exists but would require material investment to scale",s:1},
-        {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2}
-      ]},
-    ]
+    enterprise: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"In the event of a potential M&A transaction, how quickly can treasury model funding requirements?", risk:"high", opts:[{l:"Weeks — funding analysis needs to be built from scratch in Excel",s:0},
+          {l:"Days — standard models exist but significant manual work required for each deal",s:1},
+          {l:"Hours — integrated deal modelling capability with live balance sheet and facility data",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury function support dividend, buyback, or return of capital decisions?", risk:"medium", opts:[{l:"Limited involvement — treasury is informed after decisions are made",s:0},
+          {l:"Advisory — treasury provides cash position data but not integrated into the decision process",s:1},
+          {l:"Strategic partner — treasury leads capital return analysis with live modelling and board input",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    group: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does group treasury support M&A activity at group and subsidiary level?", risk:"high", opts:[{l:"Limited — deal teams work with external advisors, treasury involved late in the process",s:0},
+          {l:"Advisory — treasury provides funding capacity data but modelling is done externally",s:1},
+          {l:"Integrated — treasury leads funding analysis with live balance sheet data and pre-built M&A models",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage intercompany capital allocation across subsidiaries?", risk:"medium", opts:[{l:"Ad hoc — capital allocation decisions made at holding company level without treasury modelling",s:0},
+          {l:"Periodic — treasury reviews intercompany capital positions quarterly",s:1},
+          {l:"Continuous — treasury maintains live intercompany capital allocation model with automated reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    portfolio: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does portfolio treasury support deal structuring and acquisition financing decisions?", risk:"high", opts:[{l:"Deal teams use external advisors — treasury is not involved in acquisition financing",s:0},
+          {l:"Treasury provides balance sheet data but deal structuring is handled by finance/advisory",s:1},
+          {l:"Treasury leads deal financing modelling with pre-built templates and live fund capacity data",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage capital recycling — exit proceeds, reinvestment decisions, distributions?", risk:"high", opts:[{l:"Managed ad hoc — capital recycling decisions handled at deal level without treasury framework",s:0},
+          {l:"Partially structured — treasury tracks major capital events but modelling is manual",s:1},
+          {l:"Fully integrated — treasury maintains live capital recycling model with automated distribution modelling",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    commodity: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the capital requirements of the physical commodity trading book?", risk:"high", opts:[{l:"Trading desk manages its own capital — treasury provides funding reactively",s:0},
+          {l:"Treasury reviews trading book capital requirements periodically",s:1},
+          {l:"Integrated — treasury maintains live view of trading book capital consumption with automated funding triggers",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support decisions on hedging capital vs. trading capital allocation?", risk:"high", opts:[{l:"Hedging and trading capital managed separately — no integrated view",s:0},
+          {l:"Periodic review — treasury and trading desk meet to discuss capital allocation",s:1},
+          {l:"Real-time capital allocation model — treasury maintains live hedging vs. trading capital dashboard",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    midmarket: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support the business when evaluating acquisition opportunities or capital investment?", risk:"high", opts:[{l:"Finance or the CEO lead — treasury provides a cash balance but not modelling support",s:0},
+          {l:"Treasury produces a basic funding analysis but it takes significant manual effort",s:1},
+          {l:"Treasury maintains a funding capacity model and can produce deal analysis within hours",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your business currently access growth capital — bank debt, equity, bonds, alternatives?", risk:"medium", opts:[{l:"Reactively — we approach our bank when we need funding",s:0},
+          {l:"Planned — we have a banking relationship and review facilities annually",s:1},
+          {l:"Strategically managed — treasury maintains a capital markets strategy with diversified funding sources",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    bankfi: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage regulatory capital optimisation alongside profitability targets?", risk:"high", opts:[{l:"Regulatory capital is managed by risk — treasury focused on liquidity not capital",s:0},
+          {l:"Treasury and risk collaborate periodically on capital optimisation",s:1},
+          {l:"Integrated — treasury maintains live capital optimisation model balancing regulatory requirements and ROE",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support ALCO in decisions on balance sheet structure, pricing, and capital deployment?", risk:"high", opts:[{l:"Treasury provides data to ALCO but does not lead balance sheet structuring analysis",s:0},
+          {l:"Treasury contributes to ALCO discussion with standard reports",s:1},
+          {l:"Treasury leads ALCO with live balance sheet analytics, transfer pricing, and capital deployment scenarios",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    digital: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage regulatory capital requirements — e-money, payment institution, or banking licence?", risk:"high", opts:[{l:"Monitored by compliance — treasury has limited visibility of regulatory capital consumption",s:0},
+          {l:"Treasury monitors regulatory capital periodically with manual reports",s:1},
+          {l:"Real-time regulatory capital monitoring — treasury maintains live dashboard of capital consumption vs. requirements",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support product pricing decisions with cost of capital and liquidity cost inputs?", risk:"medium", opts:[{l:"Product pricing is set by commercial teams — treasury inputs are not systematically included",s:0},
+          {l:"Treasury provides cost of funds data periodically for major pricing decisions",s:1},
+          {l:"Integrated — treasury provides real-time cost of capital and liquidity cost data to product pricing framework",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    whitelabel: [
+      {t:"When your CFO or board asks for capital allocation options, how prepared is treasury?", risk:"high", opts:[{l:"Reactive — treasury provides data when requested, analysis built from scratch each time",s:0},
+          {l:"Semi-prepared — standard templates exist but live data requires manual compilation",s:1},
+          {l:"Always ready — live capital position dashboard with scenario modelling available on demand",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is treasury's contribution to the organisation's cost of capital?", risk:"medium", opts:[{l:"Not measured — treasury is viewed as a cost centre, contribution not quantified",s:0},
+          {l:"Partially — some metrics tracked (e.g., hedge P&L, FX savings) but not holistically",s:1},
+          {l:"Fully quantified — treasury ROI reported to CFO/board, integrated into capital governance",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your organisation manage working capital optimisation as a strategic lever?", risk:"medium", opts:[{l:"Not actively managed — working capital reviewed at year-end or during refinancing",s:0},
+          {l:"Annual programme — periodic reviews with limited treasury involvement",s:1},
+          {l:"Continuous optimisation — treasury-led with real-time metrics and SCF integration",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"Is your treasury architecture designed to support the organisation at its next stage of growth?", risk:"high", opts:[{l:"No — current setup would require significant restructuring to support major growth",s:0},
+          {l:"Partially — some capability exists but would require material investment to scale",s:1},
+          {l:"Yes — architecture is designed to scale, with modular capability and regulatory readiness",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the capital required to support client treasury operations on the platform?", risk:"high", opts:[{l:"Capital assessed reactively — new client onboarding triggers capital review",s:0},
+          {l:"Periodic review — platform capital requirements modelled quarterly",s:1},
+          {l:"Real-time — treasury maintains live capital consumption model across all client entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury support commercial decisions on new client pricing and platform capacity?", risk:"medium", opts:[{l:"Commercial teams set pricing — treasury not systematically involved in client economics",s:0},
+          {l:"Treasury provides cost of funds data for major client decisions",s:1},
+          {l:"Integrated — treasury provides real-time capital and liquidity cost inputs to all client pricing decisions",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
   },
-
-  // ── DIMENSION 05: ECOSYSTEM SCALE ──
   eco: {
-    base: [
-      {t:"How do subsidiary treasury teams connect to and report into group treasury?", risk:"high", opts:[
-        {l:"Manually — subsidiaries submit data via email/Excel to group on a scheduled basis",s:0},
-        {l:"Partially connected — some subsidiaries on TMS, others still manual",s:1},
-        {l:"Fully connected — all entities on shared architecture with automated consolidation",s:2}
-      ]},
-      {t:"How do you manage bank connectivity and payment flows across your entity structure?", risk:"high", opts:[
-        {l:"Each entity manages its own banking independently — no group connectivity layer",s:0},
-        {l:"Partially rationalised — some shared banking but multiple disconnected flows",s:1},
-        {l:"Centralised — single payment factory or in-house bank handling flows across entities",s:2}
-      ]},
-      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[
-        {l:"Inconsistent — each entity or region applies policies independently",s:0},
-        {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
-        {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2}
-      ]},
-      {t:"If you acquired a new entity today, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[
-        {l:"Months — significant project required to onboard onto banking and TMS",s:0},
-        {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
-        {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2}
-      ]},
-      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[
-        {l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
-        {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
-        {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2}
-      ]},
-      {t:"How visible is your total group liquidity position across all entities, currencies, and off-balance sheet items?", risk:"high", opts:[
-        {l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
-        {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
-        {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2}
-      ]},
-    ]
+    enterprise: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How do subsidiary treasury teams connect to and report into group treasury?", risk:"high", opts:[{l:"Manually — subsidiaries submit data via email/Excel to group on a scheduled basis",s:0},
+          {l:"Partially connected — some subsidiaries on TMS, others still manual",s:1},
+          {l:"Fully connected — all entities on shared architecture with automated consolidation",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How do you manage bank connectivity and payment flows across your entity structure?", risk:"high", opts:[{l:"Each entity manages its own banking independently — no group connectivity layer",s:0},
+          {l:"Partially rationalised — some shared banking but multiple disconnected flows",s:1},
+          {l:"Centralised — single payment factory or in-house bank handling flows across entities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    group: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does group treasury manage the addition of new subsidiaries or joint ventures?", risk:"high", opts:[{l:"Each addition is a bespoke project — no standard onboarding framework",s:0},
+          {l:"Standard process exists but integration typically takes months",s:1},
+          {l:"Rapid onboarding framework — new entities connected within days using standardised templates",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury manage the ongoing harmonisation of banking relationships across the group?", risk:"medium", opts:[{l:"Each subsidiary manages its own banking — no group rationalisation programme",s:0},
+          {l:"Periodic review — group treasury reviews banking panel annually",s:1},
+          {l:"Active rationalisation — group banking framework with defined panel, automated relationship monitoring",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    portfolio: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does group treasury maintain visibility and control as the portfolio grows through acquisitions?", risk:"high", opts:[{l:"Each new acquisition starts fresh — visibility and control built up over months",s:0},
+          {l:"Standard onboarding checklist — treasury visibility achieved within weeks of close",s:1},
+          {l:"Automated onboarding — new portfolio companies connected to group platform within days of completion",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the wind-down or exit of portfolio entities?", risk:"medium", opts:[{l:"Ad hoc — exit treasury work is managed as a bespoke project",s:0},
+          {l:"Basic framework — treasury exit checklist exists but process is manual",s:1},
+          {l:"Standardised exit playbook — automated cash repatriation, facility closure, and bank account management",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    commodity: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the complexity of multi-commodity, multi-geography operations?", risk:"high", opts:[{l:"Each commodity or region managed separately — no integrated treasury view",s:0},
+          {l:"Partial integration — major commodities and regions consolidated, others managed manually",s:1},
+          {l:"Fully integrated — single platform providing real-time consolidated view across all commodities and regions",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the scalability of margin and collateral management as trading volumes grow?", risk:"high", opts:[{l:"Manually — margin and collateral scaled by adding headcount",s:0},
+          {l:"Partially automated — some margin management in TMS but collateral tracking is manual",s:1},
+          {l:"Fully scalable — automated margin and collateral management platform scales with volume without headcount",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    midmarket: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"As your business grows internationally, how does treasury manage increasing complexity?", risk:"high", opts:[{l:"Each new market is set up independently — no group framework in place",s:0},
+          {l:"We apply our existing processes to new markets with some adaptation",s:1},
+          {l:"We have a scalable treasury framework — new markets onboard quickly using standard templates",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your treasury infrastructure support the business as it moves from domestic to multi-entity?", risk:"high", opts:[{l:"We\'re still largely single-entity — treasury infrastructure hasn\'t been designed for scale yet",s:0},
+          {l:"We have a few entities and manage them with manual workarounds",s:1},
+          {l:"We have a scalable TMS architecture designed for multi-entity from the start",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    bankfi: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage liquidity across multiple legal entities and regulatory jurisdictions?", risk:"high", opts:[{l:"Each entity manages liquidity independently — no group optimisation",s:0},
+          {l:"Partial group visibility — major entities consolidated, others managed locally",s:1},
+          {l:"Fully integrated — real-time group liquidity management with regulatory ring-fencing controls",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the transfer of capital and liquidity between regulated entities?", risk:"high", opts:[{l:"Ad hoc — transfers assessed and approved manually for each event",s:0},
+          {l:"Partially structured — transfer framework exists but execution is manual and slow",s:1},
+          {l:"Automated — pre-approved transfer framework with real-time regulatory capacity monitoring",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    digital: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage liquidity as transaction volumes scale rapidly?", risk:"high", opts:[{l:"Reactively — liquidity scaled by adding manual funding as volumes grow",s:0},
+          {l:"Partially automated — some volume-based triggers but funding decisions are manual",s:1},
+          {l:"Fully automated — real-time volume monitoring with automated liquidity scaling and pre-arranged facilities",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury infrastructure support the launch of new products or markets?", risk:"medium", opts:[{l:"Each new product or market requires a bespoke treasury setup",s:0},
+          {l:"Partially modular — some components reused but significant manual work for each launch",s:1},
+          {l:"Fully modular — treasury infrastructure configures rapidly for new products and markets with minimal effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
+    whitelabel: [
+      {t:"How consistent are treasury policies and controls applied across your group?", risk:"medium", opts:[{l:"Inconsistent — each entity or region applies policies independently",s:0},
+          {l:"Partially harmonised — group policy exists but compliance monitoring is manual",s:1},
+          {l:"Fully standardised — group policy enforced through system controls with automated compliance reporting",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your group treasury handle multi-currency cash pooling?", risk:"medium", opts:[{l:"No cash pooling in place — entities manage their own currency balances independently",s:0},
+          {l:"Notional pooling only — interest optimisation without physical concentration",s:1},
+          {l:"Physical and notional pooling — automated concentration with full multi-currency support",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How visible is your total group liquidity position across all entities and currencies?", risk:"high", opts:[{l:"Limited — group liquidity requires significant manual compilation and is often incomplete",s:0},
+          {l:"Reasonable — most major entities visible but gaps remain in smaller subsidiaries",s:1},
+          {l:"Comprehensive — complete group visibility in real-time across all entities and currencies",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"If you acquired a new entity, how quickly could it be integrated into your treasury infrastructure?", risk:"medium", opts:[{l:"Months — significant project required to onboard onto banking and TMS",s:0},
+          {l:"Weeks — standard onboarding process exists but requires manual configuration",s:1},
+          {l:"Days — modular architecture enables rapid entity onboarding with minimal manual effort",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does your platform manage treasury infrastructure as the client base grows?", risk:"high", opts:[{l:"Each new client requires significant manual treasury setup",s:0},
+          {l:"Partially standardised — onboarding templates exist but customisation is time-consuming",s:1},
+          {l:"Fully scalable — automated client onboarding connects new clients to treasury infrastructure within days",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]},
+      {t:"How does treasury manage the regulatory complexity of operating across multiple client jurisdictions?", risk:"high", opts:[{l:"Managed case by case — regulatory requirements assessed for each client manually",s:0},
+          {l:"Framework exists — regulatory requirements mapped by jurisdiction but monitoring is manual",s:1},
+          {l:"Automated regulatory intelligence — platform monitors jurisdiction requirements in real-time for all clients",s:2},
+          {l:"Not applicable / I don\'t have visibility on this",s:1}]}
+    ],
   },
 };
+
 
 // ══════════════════════════════════════════════
 // RECOMMENDATIONS
@@ -927,11 +1837,11 @@ function getQsForDim(dimId){
   const dimQs = QS[dimId];
   if(!dimQs) return [];
   if(dimId==='priorities') return dimQs[S.persona]||dimQs['treasurer']||[];
-  return dimQs['base']||[];
+  return dimQs[S.model]||dimQs['enterprise']||[];
 }
 
 function getAnswersForDim(dimId){
-  const sub = dimId==='priorities'?S.persona:'base';
+  const sub = dimId==='priorities'?S.persona:(S.model||'enterprise');
   if(!S.answers[dimId][sub]) S.answers[dimId][sub]=[];
   return S.answers[dimId][sub];
 }
@@ -1138,6 +2048,7 @@ function navDim(dir){
 // ══════════════════════════════════════════════
 function getScores(){
   const res={};
+  const w=WEIGHTS[S.model]||WEIGHTS['enterprise'];
   DKEYS.forEach(k=>{
     const qs=getQsForDim(k);
     const ans=getAnswersForDim(k);
@@ -1145,7 +2056,7 @@ function getScores(){
     ans.forEach((ai,qi)=>{if(ai!==undefined&&qs[qi])tot+=qs[qi].opts[ai].s;});
     const max=qs.reduce((a,q)=>a+Math.max(...q.opts.map(o=>o.s)),0);
     const pct=max>0?Math.round((tot/max)*100):50;
-    res[k]={raw:tot,max,pct};
+    res[k]={raw:tot,max,pct,weight:w[k]||16};
   });
   return res;
 }
@@ -1225,10 +2136,10 @@ function buildRegimeGrid(scores){
 // ══════════════════════════════════════════════
 function generateReport(){
   const scores=getScores();
-  const avg=Math.round(Object.values(scores).reduce((a,s)=>a+s.pct,0)/DKEYS.length);
+  const wt=WEIGHTS[S.model]||WEIGHTS['enterprise'];const avg=Math.round(DKEYS.reduce((a,k)=>a+scores[k].pct*(wt[k]||16),0)/100);
   const orag=rag(avg);
   const roleMap={cfo:'CFO',treasurer:'Group Treasurer',hot:'Head of Treasury',analyst:'Treasury Analyst',other:''};
-  const modelMap={enterprise:'Enterprise Treasury',group:'Group Treasury',portfolio:'Portfolio Treasury',whitelabel:'White-Label Treasury',embedded:'Embedded Treasury'};
+  const modelMap={enterprise:'Enterprise Treasury',group:'Group Treasury',portfolio:'Portfolio Treasury',commodity:'Commodity Treasury',midmarket:'Mid-Market Treasury',bankfi:'Banks & FIs',digital:'Digital Treasury',whitelabel:'White-Label Treasury'};
   const verdicts={red:'Your treasury function carries material risk across multiple dimensions. Significant gaps exist that require a structured transformation programme.',amber:'Your treasury function has solid foundations but critical gaps remain — particularly in crisis resilience and strategic capital capability.',green:'Your treasury function demonstrates strong maturity. You are well-positioned to act as a strategic capital partner to the CFO and board.'};
   const vLabels={red:'At Risk',amber:'Developing',green:'Resilient'};
 
