@@ -371,6 +371,10 @@ h1 em{font-style:italic;color:var(--gold)}
         </select></div>
       </div>
     </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Contact (Email or Mobile) *</label><input id="i-contact" class="fi" type="text" placeholder="name@company.com or +44 7..."></div>
+      <div class="fg"></div>
+    </div>
     <div class="sl" style="margin-bottom:12px">Select your operating model *</div>
     <p class="sd" style="margin-bottom:18px">This is the lens through which all six dimensions are scored — pre-weighting the engine to reflect the structural fit for your treasury function.</p>
     <div class="mgrid">
@@ -1817,7 +1821,7 @@ const RECS = {
 // STATE
 // ══════════════════════════════════════════════
 let S = {
-  model: null, company:'', name:'', role:'',
+  model: null, company:'', name:'', role:'', contact:'',
   persona: 'treasurer',
   currentDim: 0,
   answers: {}  // answers[dimId][persona|'base'][qi] = optionIndex
@@ -1872,6 +1876,9 @@ function startAssessment(){
   const co=document.getElementById('i-co').value.trim();
   if(!co){document.getElementById('i-co').style.borderColor='#ef4444';document.getElementById('i-co').focus();return;}
   S.company=co;
+  const contact=document.getElementById('i-contact').value.trim();
+  if(!contact){document.getElementById('i-contact').style.borderColor='#ef4444';document.getElementById('i-contact').focus();return;}
+  S.contact=contact;
   S.name=document.getElementById('i-nm').value.trim();
   S.role=document.getElementById('i-role').value;
   // default persona based on role
@@ -2253,7 +2260,7 @@ function toggleCard(i){
 // GENERATE SHAREABLE REPORT URL
 // ══════════════════════════════════════════════
 function generateReportUrl() {
-  var state = {c:S.company,n:S.name,r:S.role,m:S.model,p:S.persona,a:{}};
+  var state = {c:S.company,n:S.name,r:S.role,m:S.model,p:S.persona,ct:S.contact,a:{}};
   DKEYS.forEach(function(k) {
     state.a[k] = {};
     Object.keys(S.answers[k]).forEach(function(sub) {
@@ -2306,6 +2313,7 @@ async function submitResults() {
       timestamp: new Date().toISOString(),
       company: S.company,
       name: S.name,
+      contact: S.contact,
       role: S.role,
       model: S.model,
       persona: S.persona,
@@ -2375,6 +2383,7 @@ window.addEventListener('DOMContentLoaded', function() {
       S.role = data.r || '';
       S.model = data.m || null;
       S.persona = data.p || 'treasurer';
+      S.contact = data.ct || '';
       if (data.a) {
         DKEYS.forEach(function(k) {
           if (data.a[k]) {
