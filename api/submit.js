@@ -61,7 +61,7 @@ export default async function handler(req, res) {
             },
             {
               type: "TextBlock",
-              text: `${d.name || 'Anonymous'} · ${d.role || 'N/A'} · ${d.model || 'N/A'} · ${d.persona || 'N/A'}`,
+              text: `${d.name || 'Anonymous'} · ${d.contact || 'no contact'} · ${d.role || 'N/A'} · ${d.model || 'N/A'} · ${d.persona || 'N/A'}`,
               isSubtle: true,
               wrap: true
             },
