@@ -8,10 +8,26 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --navy:#07091a;--card:#0e1422;--card2:#121a2e;--border:#192035;--border2:#1e2d46;
-  --gold:#c9a84c;--gold2:#e8c76a;--gbg:rgba(201,168,76,0.07);--gborder:rgba(201,168,76,0.2);
-  --teal:#00c2d4;--red:#ef4444;--amber:#f59e0b;--green:#10b981;--purple:#a78bfa;
-  --white:#eef2ff;--muted:#6b7fa0;--text:#c0cce8;
+  --navy:#ffffff;
+  --card:#ffffff;
+  --card2:#f5f7fa;
+  --border:#e3e7ed;
+  --border2:#cbd2dc;
+
+  --gold:#0067b1;
+  --gold2:#004f8a;
+  --gbg:rgba(0,103,177,.07);
+  --gborder:rgba(0,103,177,.22);
+
+  --teal:#00a6b2;
+  --red:#d93025;
+  --amber:#e58a00;
+  --green:#14804a;
+  --purple:#7656c9;
+
+  --white:#17212b;
+  --muted:#667382;
+  --text:#344150;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden}
@@ -291,7 +307,73 @@ h1 em{font-style:italic;color:var(--gold)}
 /* ── OUTLINE BUTTON ── */
 .btn-outline{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--gold);font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;padding:13px 30px;border-radius:4px;border:1px solid var(--gold);cursor:pointer;text-transform:uppercase;transition:all .2s;text-decoration:none}
 .btn-outline:hover{background:rgba(201,168,76,.1);transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.15)}
+/* ION light theme */
+body,
+#s-land {
+  background: #ffffff;
+}
 
+.hdr,
+.assess-topbar,
+.assess-footer {
+  background: rgba(255,255,255,.97);
+}
+
+.sidebar {
+  background: #f7f9fb;
+}
+
+.opt {
+  background: #ffffff;
+}
+
+.opt:hover {
+  background: rgba(0,103,177,.04);
+  border-color: rgba(0,103,177,.4);
+}
+
+.opt.sel {
+  background: rgba(0,103,177,.07);
+  border-color: var(--gold);
+}
+
+.land-bg::before {
+  background:
+    radial-gradient(
+      ellipse 65% 55% at 50% -5%,
+      rgba(0,103,177,.10) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 45% 45% at 85% 90%,
+      rgba(0,166,178,.07) 0%,
+      transparent 55%
+    );
+}
+
+.land-bg::after {
+  background-image:
+    linear-gradient(rgba(0,103,177,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,103,177,.06) 1px, transparent 1px);
+}
+
+.logo-img {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.sidebar-logo .logo-img {
+  width: 165px;
+}
+
+@media(max-width:600px) {
+  .logo-img {
+    width: 140px;
+  }
+}
 </style>
 </head>
 <body>
@@ -302,9 +384,8 @@ h1 em{font-style:italic;color:var(--gold)}
 <div id="s-land" class="screen active">
   <header class="hdr">
     <div class="logo">
-      <div class="logo-box">iON</div>
-      <div><div class="logo-name">ION Treasury</div><div class="logo-sub">Strategic Intelligence</div></div>
-    </div>
+  <img class="logo-img" src="assets/ION%20Treasury%20horizontal%20logo%20png.png" alt="ION Treasury">
+</div>
     <div class="hdr-chip">◉ Strategic Assessment · Live</div>
   </header>
   <div class="land-body">
@@ -336,9 +417,8 @@ h1 em{font-style:italic;color:var(--gold)}
 <div id="s-setup" class="screen">
   <header class="hdr">
     <div class="logo">
-      <div class="logo-box">iON</div>
-      <div><div class="logo-name">ION Treasury</div><div class="logo-sub">Strategic Intelligence</div></div>
-    </div>
+  <img class="logo-img" src="assets/ION%20Treasury%20horizontal%20logo%20png.png" alt="ION Treasury">
+</div>
     <div class="hdr-chip">Setup · Step 1 of 2</div>
   </header>
   <div class="inner">
@@ -405,9 +485,8 @@ h1 em{font-style:italic;color:var(--gold)}
   <div class="sidebar">
     <div class="sidebar-hdr">
       <div class="sidebar-logo">
-        <div class="logo-box">iON</div>
-        <div><div class="logo-name">ION Treasury</div><div class="logo-sub">Assessment</div></div>
-      </div>
+  <img class="logo-img" src="assets/ION%20Treasury%20horizontal%20logo%20png.png" alt="ION Treasury">
+</div>
     </div>
 
     <!-- PERSONA SWITCHER -->
@@ -475,9 +554,8 @@ h1 em{font-style:italic;color:var(--gold)}
 <div id="s-report" class="screen">
   <header class="hdr">
     <div class="logo">
-      <div class="logo-box">iON</div>
-      <div><div class="logo-name">ION Treasury</div><div class="logo-sub">Strategic Intelligence</div></div>
-    </div>
+  <img class="logo-img" src="assets/ION%20Treasury%20horizontal%20logo%20png.png" alt="ION Treasury">
+</div>
     <div class="hdr-chip">◉ Assessment Report · Complete</div>
   </header>
   <div class="rbody" id="report-body"></div>
