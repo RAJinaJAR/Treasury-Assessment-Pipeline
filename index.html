@@ -86,7 +86,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
 .mc{background:var(--card);border:2px solid var(--border);border-radius:7px;padding:20px;cursor:pointer;transition:all .2s;position:relative}
 .mc:hover{border-color:rgba(201,168,76,.35)}
-.mc.sel{border-color:var(--gold);background:rgba(201,168,76,.05)}
+.mc.sel{border-color:var(--gold);background:#eef4fb}
 .mc.sel::after{content:'✓';position:absolute;top:9px;right:11px;width:19px;height:19px;background:var(--gold);border-radius:50%;font-size:10px;font-weight:700;color:var(--navy);line-height:19px;text-align:center}
 .mt{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
 .mn{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2}
@@ -310,9 +310,10 @@ h1 em{font-style:italic;color:var(--gold)}
 /* ION light theme */
 body,
 #s-land {
-  background: #ffffff;
+  background: #071a35;
 }
 
+/* Top header bars stay white so the ION Treasury logo reads cleanly */
 .hdr,
 .assess-topbar,
 .assess-footer {
@@ -333,7 +334,7 @@ body,
 }
 
 .opt.sel {
-  background: rgba(0,103,177,.07);
+  background: #eef4fb;
   border-color: var(--gold);
 }
 
@@ -374,6 +375,36 @@ body,
     width: 140px;
   }
 }
+
+/* ── NAVY BACKDROP: keep floating text readable on the blue background ── */
+/* (cards, sidebar and the white top-bars keep their dark text as-is) */
+
+/* Landing hero */
+h1 { color:#ffffff; }
+h1 em { color:#4aa3e0; }
+.eyebrow { color:#4aa3e0; }
+.eyebrow::before, .eyebrow::after { background:#4aa3e0; }
+.lead, .land-fine { color:#aebfd6; }
+
+/* Setup screen (form sits directly on the navy backdrop) */
+.sl { color:#4aa3e0; }
+#s-setup .sh { color:#ffffff; }
+#s-setup .sd { color:#aebfd6; }
+.fl { color:#aebfd6; }
+
+/* Assessment dimension header */
+.dim-hed-label { color:#4aa3e0; }
+.dim-hed-title { color:#ffffff; }
+.dim-hed-desc { color:#aebfd6; }
+
+/* Report hero + section labels */
+#s-report .r-eyebrow { color:#4aa3e0; }
+#s-report .r-title { color:#ffffff; }
+#s-report .r-meta,
+#s-report .r-sum { color:#aebfd6; }
+
+/* Radar labels are readable on the white viz card */
+.radar-wrap svg text { fill:#334a63; }
 </style>
 </head>
 <body>
