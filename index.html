@@ -199,7 +199,9 @@ h1 em{font-style:italic;color:var(--gold)}
 .sbar-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:4px}
 .sbar-track{height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
 .sbar-fill{height:100%;border-radius:2px;transition:width .8s ease}
-.sbar-fill.red{background:#ef4444}.sbar-fill.amber{background:#f59e0b}.sbar-fill.green{background:#10b981}
+.sbar-fill.red{background:#ef4444}.sbar-fill.amber{background:#f59e0b}.sbar-fill.green{background:#10b981}.sbar-fill.na{background:#94a3b8}
+.rag.na{background:#94a3b8;box-shadow:0 0 6px rgba(148,163,184,.5)}
+.rc-pct.na{color:#94a3b8}.rc-bar-fill.na{background:#94a3b8}.rl-score.na{color:#94a3b8}
 .rag{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .rag.red{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,.5)}
 .rag.amber{background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,.5)}
@@ -538,8 +540,9 @@ h1 em { color:#4aa3e0; }
     <div class="land-bg"></div>
     <div class="land-inner">
       <div class="eyebrow">Treasury Maturity Assessment</div>
-      <h1>How <em>strategic</em> is your treasury<br></h1>
-      <p class="lead">Answer 20 questions about how your treasury function actually operates: technology stack, process maturity, and capital intelligence. Receive a personalised maturity report across the five regimes of modern treasury, weighted to your operating model.</p>
+      <h1>How <em>strategic</em> is your treasury?<br>Is your <em>technology</em> ready to take you there?<br>Find out how ready you are.</h1>
+      <p class="lead">Answer 20 questions about how your treasury operates today, from technology and automation to process maturity, visibility and decision support. Receive a personalised maturity report across the five regimes of modern treasury, weighted to your operating model, and discover where your current treasury infrastructure may be enabling, or limiting, your progression from operational to strategic treasury.</p>
+      <p class="land-fine" style="margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto">The assessment provides an indicative maturity view based on the information you provide.</p>
       <div class="dtags">
         <span class="dtag d1">01 · Daily Operations</span>
         <span class="dtag d2">02 · Market Volatility</span>
@@ -728,14 +731,14 @@ const QS = {
       opts:['Regional teams manage local banks independently, no group-level view','Tracked in a spreadsheet, reviewed periodically by the treasury team','TMS monitors exposure per bank with threshold alerts','Automated counterparty exposure dashboard with live limit governance and escalation workflows'] },
   ],
   vol: [
-    { sc:'FX Exposure Visibility', t:'When a major currency moves significantly overnight, how quickly can your treasury quantify net FX exposure across all entities?', ctx:'',
-      opts:['Discovered through subsidiary morning reports, typically mid-morning','Treasury team can pull it together within a few hours from multiple systems','Automated FX exposure reporting available within 30 minutes, per entity','Real-time net FX exposure dashboard, hedged or unhedged position visible before markets open'] },
-    { sc:'Hedging Programme', t:'How is your FX hedging programme governed and executed?', ctx:'',
-      opts:['Hedges are placed reactively based on treasurer judgement and bank conversations','A hedging policy exists but execution requires multiple sign-off steps and is often slow','Policy-driven hedging with TMS-integrated execution and confirmations','Pre-authorised hedge execution within policy limits, with real-time hedge effectiveness reporting'] },
-    { sc:'Interest Rate Sensitivity', t:'If the central bank raised rates unexpectedly by 75bps, how quickly could your treasury quantify the impact on your debt portfolio?', ctx:'',
-      opts:['Manual modelling required, likely 2 to 3 days for a complete picture','Treasury team can model it from system data, usually within a day','TMS runs interest rate sensitivity scenarios automatically on demand','Continuous rate sensitivity monitoring across the full debt portfolio, updated intraday'] },
-    { sc:'Internal Liquidity', t:'When a subsidiary has surplus cash and another has a funding need, how does your group resolve this?', ctx:'',
-      opts:['Each entity manages its own funding externally, the group does not net internally','Intercompany loans arranged manually, typically on a weekly cycle','Notional or ZBA cash pool covering most entities, managed via TMS','Multi-currency automated sweeping with real-time header account optimisation across the group'] },
+    { sc:'FX Exposure Visibility', t:'When a major currency moves significantly overnight, how quickly can your treasury quantify net FX exposure across all entities?', ctx:'', na:true,
+      opts:['Discovered through subsidiary morning reports, typically mid-morning','Treasury team can pull it together within a few hours from multiple systems','Automated FX exposure reporting available within 30 minutes, per entity','Real-time net FX exposure dashboard, hedged or unhedged position visible before markets open','We have no material foreign currency exposure, so FX exposure monitoring is not required.'] },
+    { sc:'Hedging Programme', t:'How is your FX hedging programme governed and executed?', ctx:'', na:true,
+      opts:['Hedges are placed reactively based on treasurer judgement and bank conversations','A hedging policy exists but execution requires multiple sign-off steps and is often slow','Policy-driven hedging with TMS-integrated execution and confirmations','Pre-authorised hedge execution within policy limits, with real-time hedge effectiveness reporting','We have no material foreign currency exposure requiring an FX hedging programme.'] },
+    { sc:'Interest Rate Sensitivity', t:'If the central bank raised rates unexpectedly by 75bps, how quickly could your treasury quantify the impact on your debt portfolio?', ctx:'', na:true,
+      opts:['Manual modelling required, likely 2 to 3 days for a complete picture','Treasury team can model it from system data, usually within a day','TMS runs interest rate sensitivity scenarios automatically on demand','Continuous rate sensitivity monitoring across the full debt portfolio, updated intraday','We have no material interest-bearing debt or other interest rate exposure requiring sensitivity monitoring.'] },
+    { sc:'Internal Liquidity', t:'When a subsidiary has surplus cash and another has a funding need, how does your group resolve this?', ctx:'', na:true,
+      opts:['Each entity manages its own funding externally, the group does not net internally','Intercompany loans arranged manually, typically on a weekly cycle','Notional or ZBA cash pool covering most entities, managed via TMS','Multi-currency automated sweeping with real-time header account optimisation across the group','Our structure does not require material intercompany funding or group liquidity management.'] },
   ],
   shock: [
     { sc:'Counterparty Default', t:'If a major banking counterparty announced insolvency, how would your treasury respond in the first hour?', ctx:'',
@@ -752,8 +755,8 @@ const QS = {
       opts:['Treasury provides the current cash balance and a basic liquidity summary','Liquidity impact can be modelled but strategic recommendations come from Finance or the CEO','Treasury presents a capital allocation framework with debt capacity, covenant impact, and scenario analysis','Treasury delivers a full capital decision brief: return capacity, deal structuring, credit impact, cost of capital delta, and recommendation'] },
     { sc:'M&A Deal Speed', t:'If an acquisition opportunity emerged with a 72-hour exclusivity window, how quickly could treasury model the deal structure?', ctx:'',
       opts:['Realistically several weeks to model a transaction with any rigour','A high-level view is possible but not a full financial structure within 72 hours','Using existing frameworks, deal structure scenarios are possible within 24 to 36 hours','Pre-built M&A modelling templates allow full deal structure scenarios within 12 hours'] },
-    { sc:'Rating Agency Pack', t:'How is your treasury data package for rating agency reviews maintained?', ctx:'',
-      opts:['Compiled manually from scratch for each review, typically takes two weeks','Based on the previous year\u2019s pack, updated with current figures','A standard pack updated quarterly with consistent metrics and KPIs','Continuously maintained with live metrics, liquidity ladders, and covenant headroom, updated monthly'] },
+    { sc:'Rating Agency Pack', t:'How is your treasury data package for rating agency reviews maintained?', ctx:'', na:true,
+      opts:['Compiled manually from scratch for each review, typically takes two weeks','Based on the previous year\u2019s pack, updated with current figures','A standard pack updated quarterly with consistent metrics and KPIs','Continuously maintained with live metrics, liquidity ladders, and covenant headroom, updated monthly','We do not currently maintain a public credit rating or have a requirement for rating agency reporting.'] },
     { sc:'CFO Reporting', t:'What treasury intelligence does your CFO receive, and how is it delivered?', ctx:'',
       opts:['Cash balance and a monthly treasury narrative prepared manually','Regular TMS-generated reports on cash, FX hedging, and debt position','An automated treasury dashboard covering cash, FX, liquidity, and covenants','A multi-dimensional executive brief covering cash, FX, rate exposure, counterparty risk, and deal pipeline impact, delivered automatically'] },
   ],
@@ -771,57 +774,121 @@ const QS = {
 
 const NAR = {
   ops:{
-    high:'Your daily operations infrastructure is strong. Real-time cash visibility, automated payment processing, and structured forecast tracking are in place. This is the baseline that allows your team to focus upward, toward higher-regime capabilities such as strategic capital contribution.',
-    mid:'Your operational foundation has elements of good practice but relies on manual processes or lagged data in key areas. The gaps here create compounding risk: inaccurate forecasts, blind spots in counterparty exposure, and payment inefficiencies that quietly erode capital.',
-    low:'Your treasury operations are running on fragmented, largely manual infrastructure. The team is likely spending significant time on reconciliation and data gathering rather than analysis. Before higher-regime capabilities can be developed, this foundation needs strengthening.' },
+    high:'Your daily operations infrastructure is strong. Real-time cash visibility, automated payment processing and structured forecast tracking are in place. A strong operational foundation can reduce manual effort and provide the visibility and control needed to support broader treasury priorities.',
+    mid:'Your operational foundation has elements of good practice but relies on manual processes or lagged data in some areas. These gaps may reduce forecast reliability, limit visibility of counterparty exposure and increase operational effort across day-to-day activity.',
+    low:'Your treasury operations rely on largely manual, fragmented processes. This may mean the team spends significant time on reconciliation and data gathering rather than analysis. Strengthening this foundation can make higher-regime capabilities easier to develop and sustain.' },
   vol:{
-    high:'Your volatility management infrastructure is in strong shape. Real-time FX exposure, policy-driven hedging with automated execution, and rate sensitivity modelling on demand give your treasury a genuine market advantage. The team is managing risk proactively, not reactively.',
-    mid:'Your FX and volatility management has partial automation but meaningful gaps. Discovery lag in FX exposure, slow hedge execution, and ad hoc rate sensitivity modelling mean that when markets move, your response is slower and less coordinated than it needs to be.',
-    low:'Your treasury has limited infrastructure for managing structural volatility. FX exposure is discovered through reporting rather than monitoring, hedging is reactive, and rate sensitivity requires significant manual effort. Market moves are creating avoidable capital losses.' },
+    high:'Your volatility management infrastructure is in strong shape. Real-time FX exposure, policy-driven hedging with automated execution and rate sensitivity modelling on demand support a proactive approach to market risk.',
+    mid:'Your FX and volatility management has partial automation with some remaining gaps. Discovery lag in FX exposure, slower hedge execution or ad hoc rate sensitivity modelling may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.',
+    low:'Your treasury has limited infrastructure for managing structural volatility. FX exposure is discovered through reporting rather than monitoring, and rate sensitivity requires significant manual effort. Current response times may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.' },
   shock:{
-    high:'Your crisis resilience infrastructure is well-developed. Pre-defined playbooks, automated counterparty monitoring, structured stress testing, and covenant early warning give your treasury the architecture to absorb shock, not just react to it. This separates your function from the majority.',
-    mid:'Your crisis capabilities are partially developed. Some monitoring and procedures are in place, but key elements (pre-defined response playbooks, repeatable stress scenarios, covenant early warning) are not yet systematised. Shocks will cause more disruption than they should.',
-    low:'Your treasury infrastructure is not designed to absorb shock events. Crisis response is reactive, stress testing is absent or ad hoc, and covenant monitoring is backward-looking. The risk here is not just financial, it is reputational and board-level credibility.' },
+    high:'Your crisis resilience infrastructure is well-developed. Structured monitoring, scenario analysis and early-warning indicators support a strong level of response preparedness, helping the team assess exposure and act quickly when shock events occur.',
+    mid:'Your crisis capabilities are partially developed. Some monitoring and procedures are in place, but elements such as repeatable stress scenarios and covenant early warning are not yet fully systematised, which may limit the speed of exposure assessment and response.',
+    low:'Your treasury has limited infrastructure for absorbing shock events. Crisis response is largely reactive and stress testing is absent or ad hoc, which may reduce the speed of exposure assessment, liquidity visibility and overall response preparedness.' },
   strat:{
-    high:'Your treasury contributes genuine strategic intelligence at board level. Capital allocation frameworks, M&A modelling, rating agency engagement, and CFO reporting are all operating at a standard that gives your function influence over real capital decisions. This is the standard Treasury 2.0 demands.',
-    mid:'Your treasury is moving toward strategic contribution but is constrained by infrastructure. You can model some scenarios but not at the speed or quality board-level decisions require. The gap is closing, but the CFO is still not getting the full capital intelligence picture from treasury.',
-    low:'Your treasury is not yet contributing at board level. The function provides cash balances and basic reporting but is not positioned to influence capital allocation, M&A structuring, or rating agency engagement. This limits treasury\u2019s influence and the CFO\u2019s decision-making quality.' },
+    high:'Your treasury contributes strong, timely input to strategic capital discussions. Capital analysis, transaction support, external reporting and CFO reporting are operating at a standard that supports high-quality, well-grounded decision-making.',
+    mid:'Your responses suggest that treasury can support some strategic capital analysis but is constrained by infrastructure. The quality and timeliness of that contribution may be limited by manual effort, which can slow the input treasury brings to board-level decisions.',
+    low:'Your responses suggest that treasury\u2019s contribution is currently weighted more toward operational reporting than strategic capital analysis. Strengthening the underlying data and reporting foundation may improve the speed and quality of the input treasury can bring to capital decisions.' },
   scale:{
-    high:'Your group treasury architecture is operating at scale. Full entity visibility, an internal bank model, rapid acquisition integration, and automated group KPI reporting are all in place. Your treasury creates measurable financial value at portfolio level, not just at entity level.',
-    mid:'Your group treasury capability has some strong elements but scale is exposing gaps. Partial entity coverage, slow intercompany processes, and long acquisition integration timelines are creating capital inefficiency that compounds across the portfolio.',
-    low:'Your treasury architecture is not yet designed for group-scale complexity. Subsidiaries operate with significant autonomy from group treasury, creating fragmented visibility, expensive external financing, and slow integration post-acquisition. The capital cost of this fragmentation grows with every entity added.' },
+    high:'Your group treasury architecture is operating well at scale. Broad entity visibility, coordinated intercompany funding, structured acquisition integration and automated group reporting support consistent control across the group.',
+    mid:'Your group treasury capability has some strong elements, but scale is exposing gaps. As the number of entities grows, partial coverage and slower intercompany processes can make visibility, funding coordination and standardisation increasingly difficult.',
+    low:'Your treasury architecture is not yet designed for group-scale complexity. As the number of entities grows, fragmented processes can make visibility, funding coordination and standardisation increasingly difficult, and make governance and oversight harder to maintain.' },
 };
 
+// Each gap carries response-aware wording: descA (predominantly manual /
+// fragmented / reactive) and descB (partial system support / some
+// centralisation, with the remaining constraint named). howIon reflects
+// actual supported ION capability only — proportionate, no unverified figures.
 const GAPS = {
   ops:[
-    { title:'Real-Time Cash Visibility', desc:'Your cash position visibility relies on manual downloads or lagged system data. The gap creates reconciliation errors, delayed decision-making, and blind spots during intraday liquidity events.', ion:'Automated bank connectivity via SWIFT or H2H feeds, consolidated through a TMS with intraday refresh capability. ION provides this across hundreds of banking relationships and entity structures.' },
-    { title:'Payment Factory & FX Netting', desc:'Decentralised payment processing creates duplicated costs, FX transaction fees, and operational risk at entity level. Each payment leaves the group without the netting benefit of a centralised factory.', ion:'A centralised payment factory with FX netting materially reduces external transaction volume, cutting bank fees and FX spread costs. ION\u2019s payment infrastructure is designed for this.' },
-    { title:'Forecast Accuracy Infrastructure', desc:'Without structured variance tracking, your cash forecasts cannot improve systematically. Inaccurate forecasts lead to unnecessary external borrowing, missed investment opportunities, and reduced credibility with the CFO.', ion:'System-generated forecasting with automated variance reporting and driver-based adjustments. AI-assisted forecasting within ION reduces forecast error progressively over time.' },
-    { title:'Counterparty Risk Governance', desc:'Spreadsheet-based counterparty tracking creates a governance risk that grows with every banking relationship. Audit committees are increasingly asking for systematic limit monitoring with evidence of escalation.', ion:'Automated counterparty exposure dashboards with pre-set limits, breach alerting, and escalation workflows, providing real-time evidence of governance control.' },
+    { title:'Real-Time Cash Visibility',
+      descA:'Your cash position relies heavily on manual downloads reconciled in spreadsheets. This may limit visibility, increase operational effort and delay decision-making during intraday liquidity events.',
+      descB:'Your cash position is supported by ERP or system data but remains a few hours behind real time. This provides some consolidated visibility, but reporting lag and manual intervention may still limit timely decision-making.',
+      howIon:'ION can provide automated bank connectivity via SWIFT or host-to-host feeds, consolidated through a TMS with intraday refresh, helping bring cash visibility across banking relationships and entity structures into a single view.' },
+    { title:'Payment Factory & FX Netting',
+      descA:'Payments are processed through local banking portals at entity level. This fragmented approach may increase operational effort, duplicate costs and reduce control over payment and FX activity.',
+      descB:'Payments are centralised through a hub but still rely on significant manual approval steps. This provides some centralisation, but the remaining manual effort may limit control and efficiency.',
+      howIon:'A centralised payment factory with FX netting can reduce unnecessary external transaction volume and improve control over payment and FX activity. ION\u2019s payment infrastructure is designed to support this.' },
+    { title:'Forecast Accuracy Infrastructure',
+      descA:'Cash forecasts are built manually in Excel with accuracy not formally tracked. Without structured variance tracking, forecasts may be harder to improve systematically, which may increase unnecessary external funding.',
+      descB:'A system forecast module is used but variance tracking is ad hoc. This provides some structure, but inconsistent variance measurement may limit how systematically forecasts improve.',
+      howIon:'ION can support system-generated forecasting with structured variance reporting and driver-based adjustments, helping treasury improve forecast reliability over time.' },
+    { title:'Counterparty Risk Governance',
+      descA:'Counterparty exposure and bank limits are managed locally or in spreadsheets with no group-level view. This may limit visibility and make governance and oversight more difficult as banking relationships grow.',
+      descB:'Counterparty exposure is tracked in a spreadsheet and reviewed periodically. This provides some oversight, but periodic manual review may limit timely visibility of limit breaches.',
+      howIon:'ION can provide automated counterparty exposure dashboards with configurable limits, breach alerting and escalation workflows, supporting clearer evidence of governance control.' },
   ],
   vol:[
-    { title:'FX Exposure Consolidation', desc:'Discovering FX exposure through subsidiary reports introduces lag measured in hours. In fast-moving currency events, hours translate directly into capital losses.', ion:'Real-time consolidated FX position by entity, currency, and hedged or unhedged status. ION aggregates exposure across the full entity structure before markets open.' },
-    { title:'Hedging Programme Speed', desc:'A hedging policy without automated execution capability is documentation, not risk management. Slow execution means market moves are often partially absorbed before hedges are in place.', ion:'Pre-authorised hedge execution within policy parameters, with TMS-integrated confirmations and real-time hedge ratio reporting. No manual hand-off required.' },
-    { title:'Rate Sensitivity Modelling', desc:'Interest rate sensitivity analysis that requires days to produce creates a dangerous decision lag when rates are moving. The CFO cannot wait for manual modelling to assess the impact of a rate surprise.', ion:'On-demand rate sensitivity scenarios across the full debt portfolio, updated intraday. The ION modelling environment allows what-if rate scenarios in minutes, not days.' },
-    { title:'Internal Capital Optimisation', desc:'Without automated cross-entity pooling, the group is borrowing externally at a spread while holding surplus cash in other entities. This is one of the most quantifiable and fixable inefficiencies in corporate treasury.', ion:'Multi-currency zero-balancing and notional pooling with automated header account optimisation. ION\u2019s cash pool architecture reduces net external borrowing costs for multi-entity groups.' },
+    { title:'FX Exposure Consolidation',
+      descA:'FX exposure is discovered through subsidiary reports, typically mid-morning. This reporting lag may increase exposure to adverse market movements and limit responsiveness.',
+      descB:'FX exposure can be pulled together within a few hours from multiple systems. This provides some visibility, but the time required and manual effort may still constrain responsiveness during fast-moving events.',
+      howIon:'ION can provide a consolidated FX position by entity, currency and hedged or unhedged status, helping aggregate exposure across the entity structure earlier in the day.' },
+    { title:'Hedging Programme Speed',
+      descA:'Hedges are placed reactively based on judgement and bank conversations. A largely manual approach may increase exposure and limit consistency with policy.',
+      descB:'A hedging policy exists but execution requires multiple sign-off steps and is often slow. This provides some governance, but execution delay may still limit how quickly exposure is covered.',
+      howIon:'ION can support policy-driven hedging with TMS-integrated execution, confirmations and hedge ratio reporting, helping reduce manual hand-offs in the hedging process.' },
+    { title:'Rate Sensitivity Modelling',
+      descA:'Interest rate sensitivity requires manual modelling over several days. This may delay decision-making when rates move and limit treasury\u2019s ability to respond quickly.',
+      descB:'Rate sensitivity can be modelled from system data within about a day. This provides some capability, but the time required may still delay the assessment of a rate surprise.',
+      howIon:'ION can support on-demand rate sensitivity scenarios across the debt portfolio, helping treasury run what-if rate analysis more quickly.' },
+    { title:'Internal Capital Optimisation',
+      descA:'Each entity manages its own funding externally, with no internal netting. This may create unnecessary external funding activity while surplus cash is held elsewhere in the group.',
+      descB:'Intercompany loans are arranged manually on a weekly cycle. This provides some netting, but the manual, periodic process may limit optimisation of group liquidity.',
+      howIon:'ION can support multi-currency zero-balancing and notional pooling with automated header account optimisation, helping reduce unnecessary external borrowing across a multi-entity group.' },
   ],
   shock:[
-    { title:'Crisis Response Playbook', desc:'Reactive crisis procedures cost time and capital in the window between event discovery and first action. Without pre-defined playbooks, the team is making first-principles decisions under maximum pressure.', ion:'Pre-configured crisis response scenarios with automated counterparty exposure quantification, so the team can act on a clear exposure picture within the hour rather than reconstructing it from scratch.' },
-    { title:'Liquidity Stress Testing', desc:'Absent or ad hoc stress testing leaves the board without the forward-looking liquidity analysis they need during uncertainty. Regulators and audit committees are increasingly treating this as a governance requirement.', ion:'A pre-built stress scenario library with automated outputs. The ION stress testing capability produces repeatable, board-ready liquidity analysis on demand.' },
-    { title:'Covenant Early Warning System', desc:'Monthly or quarterly covenant tracking means your lender often has better visibility of your headroom than your treasury team. This is a relationship and governance risk that can be reduced with the right infrastructure.', ion:'Continuous monitoring of key covenant metrics \u2014 such as debt service coverage, minimum liquidity and net worth \u2014 with configurable alert thresholds and automated escalation, giving treasury early warning before headroom is at risk.' },
-    { title:'Tested Business Continuity', desc:'Untested BCP procedures are not continuity capability, they are a false sense of security. System outage resilience must be demonstrated through regular drills, not assumed from documentation.', ion:'Resilient multi-system architecture with offline-capable settlement procedures. ION\u2019s platform architecture is designed for high-availability operations with documented and tested failover capability.' },
+    { title:'Crisis Response Playbook',
+      descA:'Crisis response is largely reactive, with the team assessing exposure from scratch under pressure. This may reduce the speed of exposure assessment and response in the critical early window.',
+      descB:'An emergency process exists but exposure is assembled manually when an event occurs. This provides some structure, but manual assembly may still slow the initial response.',
+      howIon:'ION can provide timely visibility into counterparty exposure and treasury positions, helping the team assess the financial impact of a counterparty event and support faster crisis decision-making.' },
+    { title:'Liquidity Stress Testing',
+      descA:'Stress testing is not formally conducted and would take time to model from scratch. This may limit the forward-looking liquidity analysis available during periods of uncertainty.',
+      descB:'Ad hoc stress scenarios are run occasionally in Excel. This provides some analysis, but the ad hoc approach may limit repeatability and consistency.',
+      howIon:'ION can support scenario analysis using treasury data and repeatable liquidity modelling, helping treasury produce consistent liquidity analysis where the underlying data is available.' },
+    { title:'Covenant Early Warning',
+      descA:'Covenant headroom is tracked at quarterly reporting. Infrequent tracking may limit visibility and reduce the time available to respond before headroom is at risk.',
+      descB:'Covenant headroom is maintained in a spreadsheet and reviewed monthly. This provides some oversight, but manual monthly review may limit early warning of emerging pressure.',
+      howIon:'ION can support monitoring of relevant debt and liquidity metrics, including selected covenant-related measures where the underlying data is available, helping treasury identify potential pressure points earlier.' },
+    { title:'Tested Business Continuity',
+      descA:'A system outage would severely disrupt settlements and position confirmation. Limited continuity capability may increase operational risk during an outage.',
+      descB:'Documented manual procedures exist but are untested and slow. This provides some cover, but untested procedures may limit confidence in continuity under real conditions.',
+      howIon:'ION\u2019s platform architecture is designed for high-availability operations, supporting resilient treasury processing and documented failover capability.' },
   ],
   strat:[
-    { title:'Capital Allocation Intelligence', desc:'Treasury providing cash balances rather than capital intelligence limits the function\u2019s influence in board-level decisions. The CFO is making capital allocation choices without the full picture of debt capacity, covenant implications, and liquidity headroom.', ion:'Real-time debt capacity analysis treasury can bring to the board, supported by covenant and liquidity data, so capital allocation discussions start from a clear funding picture.' },
-    { title:'M&A Modelling Speed', desc:'Multi-week deal modelling timelines cost opportunities in a world where exclusivity windows are often 72 hours. Treasury\u2019s inability to respond at deal speed removes it from the M&A conversation.', ion:'Live, consolidated treasury data \u2014 funding capacity, facility headroom and covenant position \u2014 giving deal teams a faster, better-grounded starting point when an opportunity emerges.' },
-    { title:'Rating Agency Data Infrastructure', desc:'Manually compiled rating agency packs signal treasury immaturity to the agencies that price your cost of capital. The quality and currency of treasury data directly affects your credit rating outcome.', ion:'A continuously maintained rating agency data pack within ION, including liquidity ladders, covenant headroom, FX exposure, and maturity profiles, updated regularly and available on demand.' },
-    { title:'Executive Treasury Reporting', desc:'Monthly manual treasury narratives do not meet the reporting standard CFOs require to manage capital efficiently. The delay and incompleteness of the information erodes the treasury-CFO relationship over time.', ion:'An automated multi-dimensional executive treasury brief covering cash, FX, rate exposure, counterparty risk, and covenant status, delivered on a pre-set schedule without manual preparation.' },
+    { title:'Capital Allocation Intelligence',
+      descA:'Treasury contributes a cash balance and basic liquidity summary to capital decisions. This suggests treasury\u2019s contribution is currently weighted more toward operational reporting than strategic capital analysis.',
+      descB:'Treasury can model liquidity impact but strategic recommendations sit with Finance or the CEO. This provides some input, but the analytical contribution to capital decisions may still be limited.',
+      howIon:'ION can provide consolidated cash, debt, liquidity and risk information that supports faster and more informed capital planning and decision-making.' },
+    { title:'M&A Modelling Support',
+      descA:'Modelling a transaction with rigour would realistically take several weeks. This may limit the treasury input available within short exclusivity windows.',
+      descB:'A high-level view is possible but not a full financial structure within a tight window. This provides some input, but the depth available at speed may be limited.',
+      howIon:'ION can provide timely treasury data on liquidity, debt, exposures and funding positions that can support transaction modelling and integration planning.' },
+    { title:'Rating Agency Data',
+      descA:'The rating agency data pack is compiled manually from scratch for each review. This may increase operational effort and limit the consistency of information available for external reporting.',
+      descB:'The pack is based on the prior year and updated with current figures. This provides some consistency, but manual updating may limit how current the information is.',
+      howIon:'ION can help centralise treasury data — including liquidity, covenant-related measures, FX exposure and maturity profiles — that may support external reporting and credit-review preparation.' },
+    { title:'Executive Treasury Reporting',
+      descA:'CFO reporting is a manually prepared cash balance and monthly narrative. This may limit the timeliness and breadth of information available to senior stakeholders.',
+      descB:'Regular system reports cover cash, FX hedging and debt. This provides useful coverage, but the reporting may not yet extend to the full set of treasury measures senior stakeholders need.',
+      howIon:'ION can support automated reporting across cash, FX, liquidity, debt, rate exposure and counterparty risk, helping deliver treasury information to senior stakeholders more consistently.' },
   ],
   scale:[
-    { title:'Group Entity Coverage', desc:'Backward-looking or partial entity coverage means the group treasury team is always managing yesterday\u2019s capital position. At scale, the percentage of entities in blind spots is a significant and growing risk.', ion:'Full entity coverage with automated daily bank feeds and real-time consolidation. ION\u2019s connectivity infrastructure covers hundreds of banking relationships across all major markets.' },
-    { title:'Internal Bank Model', desc:'Subsidiaries arranging external financing independently is systematically the most expensive capital structure for a group. Every external draw that could be an intercompany transaction is a direct cost to the portfolio.', ion:'An internal bank model within ION provides pre-priced intercompany facilities available on request, reducing subsidiary financing costs relative to external funding.' },
-    { title:'Acquisition Integration Velocity', desc:'Long treasury integration timelines create sustained capital leakage post-acquisition. During that window, the acquired entity is outside the group\u2019s visibility, pooling, and governance architecture.', ion:'The ION integration playbook brings acquired entities into group cash visibility, pooling and covenant monitoring on a structured, accelerated timeline rather than leaving them outside group architecture for months.' },
-    { title:'Group Treasury Intelligence', desc:'Manually produced group treasury reports give the executive team a delayed, incomplete view of their capital position. At portfolio scale, this delay compounds into real capital allocation errors.', ion:'Automated group treasury intelligence delivered daily, including entity-level cash, FX exposure, liquidity headroom, covenant status, and intercompany positions, without manual preparation.' },
+    { title:'Group Entity Coverage',
+      descA:'Entity reporting is weekly and group visibility is backward-looking. This may limit visibility and make funding coordination and oversight more difficult as the group grows.',
+      descB:'Daily reporting covers most entities, with estimates for the remainder. This provides broad coverage, but the remaining gaps may limit complete group visibility.',
+      howIon:'ION can support broad entity coverage with automated daily bank feeds and consolidation, helping bring group cash into a more complete and current view.' },
+    { title:'Internal Bank Model',
+      descA:'Subsidiaries arrange external financing independently, with treasury not involved. This may create unnecessary external funding activity across the group.',
+      descB:'Intercompany loans are possible but take several weeks to arrange. This provides some internal funding, but the time required may limit its use.',
+      howIon:'ION can support an internal bank model with pre-priced intercompany facilities available on request, helping reduce reliance on external funding where appropriate.' },
+    { title:'Acquisition Integration',
+      descA:'Treasury integration is the last workstream and takes many months. During that window, the acquired entity may remain outside group visibility, pooling and oversight.',
+      descB:'Integration takes several months depending on system and banking compatibility. This provides a defined path, but the timeline may still limit early visibility of acquired entities.',
+      howIon:'ION can support a structured approach to bringing acquired entities into group cash visibility, pooling and monitoring, helping standardise treasury integration priorities.' },
+    { title:'Group Treasury Intelligence',
+      descA:'Group treasury reporting is compiled manually and is not currently a full dashboard. This may limit the timeliness and completeness of the group view available to senior stakeholders.',
+      descB:'A manual weekly narrative report is produced. This provides some visibility, but the manual effort and cadence may limit how current the group view is.',
+      howIon:'ION can support automated group treasury reporting across entity cash, FX exposure, liquidity, covenant-related measures and intercompany positions, helping reduce manual preparation.' },
   ],
 };
 
@@ -833,43 +900,43 @@ function execTier(pct){
   return              {key:'low',     label:'Foundational Treasury', band:'red'};
 }
 const EXEC_BODY = {
-  high:'Your assessment results indicate a treasury function operating at genuine strategic level. Across all five regimes, your technology stack, process maturity, and capital intelligence infrastructure are in strong shape. You have the architecture to contribute meaningfully to board-level capital decisions, not just to control daily operations. The ION conversation at this level is about compounding the advantage: compressing M&A integration timelines, reducing cost of capital, and positioning treasury as a measurable value creator for the business.',
-  midhigh:'Your treasury demonstrates strong operational capability and developing strategic reach. Daily operations, volatility management, and resilience are well-supported by your technology infrastructure. The gaps show most clearly in Regimes 04 and 05, strategic capital contribution and group-scale coordination. When the next board capital decision or acquisition opportunity arrives, your infrastructure may not give you the speed or intelligence the moment demands. The path to closing this gap is defined, and shorter than most treasurers expect.',
-  mid:'Your treasury has a solid operational foundation with meaningful gaps in the higher regimes. Cash visibility, payment processing, and basic FX management are in place. But your assessment reveals material weaknesses in crisis resilience, strategic capital intelligence, and group-scale architecture. These gaps are not just operational risks, they represent a ceiling on treasury\u2019s influence and credibility at board level. The infrastructure gap between your current position and strategic treasury is real but addressable.',
-  midlow:'Your treasury is managing the essentials with a mix of manual processes and partial system support. The assessment reveals significant infrastructure gaps across multiple regimes. The team is likely spending a disproportionate amount of time on data gathering and reconciliation, limiting the capacity available for analysis and strategic contribution. The priority is building a reliable operational foundation before higher-regime capabilities can be developed and sustained.',
-  low:'Your assessment indicates a treasury function operating predominantly on manual processes with limited system integration. The infrastructure gaps are significant across all five regimes. This is not uncommon, many treasury functions were built for a world of simpler capital structures, fewer entities, and more stable markets. The gap is architectural, not cultural. ION has a defined playbook for this transformation, and the organisations that have made it have done so faster than they expected.',
+  high:'Your responses indicate a treasury function operating at a strong, strategic level. Across the regimes assessed, your technology, process maturity and treasury data foundation appear well developed, supporting timely, well-grounded input to more strategic decisions. At this level, the focus is typically on compounding existing strengths — deepening automation, extending coverage and strengthening the data that supports strategic capital and funding decisions.',
+  midhigh:'Your responses suggest strong operational capability with developing strategic reach. Daily operations, volatility management and resilience appear well supported by your technology foundation. Where regime results are lower, there may be opportunities to strengthen the treasury data and analytical foundation used for more strategic decisions. The appropriate priorities will depend on your specific regime results.',
+  mid:'Your responses suggest a solid operational foundation with opportunities to strengthen higher-regime capabilities. Where your regime results are lower, these gaps may limit the speed, visibility and analytical capacity treasury can bring to more strategic decisions. The path from your current position toward a more strategic treasury is addressable and can be sequenced to your priorities.',
+  midlow:'Your treasury is managing the essentials with a mix of manual processes and partial system support. Where regime results are lower, the team may be spending a disproportionate amount of time on data gathering and reconciliation, which can limit the capacity available for analysis and more strategic contribution. Establishing a reliable technology and operating foundation is typically the priority before higher-regime capabilities can be developed and sustained.',
+  low:'Your responses suggest a treasury function operating predominantly on manual processes with limited system integration. This is not uncommon — many treasury functions were built for a world of simpler capital structures, fewer entities and more stable markets. The gap is largely architectural, and strengthening the technology foundation can make higher-regime capabilities easier to develop over time.',
 };
 
 const ROADMAP = {
   low:[
-    { num:'PHASE 01', title:'Build the Foundation', horizon:'Months 1 to 6', items:['Implement automated bank connectivity and TMS','Establish real-time cash visibility across all entities','Centralise payment processing and approval workflows','Set up structured variance tracking for cash forecasting'] },
-    { num:'PHASE 02', title:'Add Volatility Controls', horizon:'Months 4 to 10', items:['Deploy FX exposure consolidation and hedging governance','Implement interest rate sensitivity modelling','Establish cross-entity cash pooling and netting','Automate counterparty limit monitoring and alerts'] },
-    { num:'PHASE 03', title:'Build Strategic Capability', horizon:'Months 8 to 18', items:['Develop capital allocation reporting for the board','Implement M&A modelling frameworks','Deploy continuous covenant and stress testing','Establish group treasury KPI dashboards'] },
+    { num:'PHASE 01', title:'Build the Foundation', horizon:'Indicative · near term', items:['Implement automated bank connectivity and a TMS','Establish real-time cash visibility across entities','Centralise payment processing and approval workflows','Set up structured variance tracking for cash forecasting'] },
+    { num:'PHASE 02', title:'Add Volatility Controls', horizon:'Indicative · medium term', items:['Strengthen FX exposure consolidation and hedging governance','Support interest rate sensitivity analysis','Establish cross-entity cash pooling and netting','Automate counterparty limit monitoring and alerts'] },
+    { num:'PHASE 03', title:'Strengthen Strategic Foundation', horizon:'Indicative · longer term', items:['Strengthen the treasury data and reporting foundation used to support capital allocation decisions','Improve access to treasury data required for transaction modelling and funding decisions','Strengthen covenant monitoring and repeatable liquidity scenario analysis','Automate group treasury reporting'] },
   ],
   mid:[
-    { num:'PHASE 01', title:'Close Operational Gaps', horizon:'Months 1 to 4', items:['Complete real-time cash visibility across all entities','Automate FX exposure consolidation','Implement covenant early warning infrastructure','Establish structured stress testing cadence'] },
-    { num:'PHASE 02', title:'Accelerate to Strategy', horizon:'Months 3 to 9', items:['Deploy capital allocation intelligence framework','Build M&A modelling capability at deal speed','Upgrade CFO reporting to multi-dimensional automation','Implement pre-defined crisis response playbooks'] },
-    { num:'PHASE 03', title:'Scale Across the Group', horizon:'Months 7 to 15', items:['Extend entity coverage to 100%','Implement internal bank model for intercompany funding','Compress acquisition integration timelines','Deploy automated group treasury intelligence reporting'] },
+    { num:'PHASE 01', title:'Close Operational Gaps', horizon:'Indicative · near term', items:['Strengthen real-time cash visibility across entities','Automate FX exposure consolidation','Strengthen covenant and liquidity monitoring','Establish a repeatable liquidity scenario-analysis cadence'] },
+    { num:'PHASE 02', title:'Strengthen Strategic Foundation', horizon:'Indicative · medium term', items:['Strengthen the treasury data and reporting foundation used to support capital allocation decisions','Improve access to treasury data required for transaction modelling and funding decisions','Strengthen executive treasury reporting across cash, FX, liquidity and risk','Strengthen crisis visibility, scenario analysis and response preparedness'] },
+    { num:'PHASE 03', title:'Scale Across the Group', horizon:'Indicative · longer term', items:['Extend entity coverage across the group','Support intercompany funding through an internal bank model','Standardise treasury integration priorities for newly acquired entities','Automate group treasury reporting'] },
   ],
   high:[
-    { num:'PHASE 01', title:'Optimise Existing Capability', horizon:'Months 1 to 3', items:['Identify remaining visibility or automation gaps','Upgrade CFO reporting to real-time automation','Enhance crisis scenario library and playbook detail','Achieve 100% group entity coverage'] },
-    { num:'PHASE 02', title:'Deepen Strategic Contribution', horizon:'Months 2 to 8', items:['Deploy full capital allocation decision framework','Implement AI-assisted forecasting and variance learning','Build rating agency data pack infrastructure','Compress M&A modelling to sub-12-hour capability'] },
-    { num:'PHASE 03', title:'Establish Treasury as Value Creator', horizon:'Months 6 to 12', items:['Implement internal bank model at full portfolio scale','Integrate treasury intelligence into board reporting cycle','Measure and report treasury value systematically','Position treasury as the capital governance layer'] },
+    { num:'PHASE 01', title:'Optimise Existing Capability', horizon:'Indicative · near term', items:['Identify remaining visibility or automation gaps','Strengthen executive treasury reporting','Enhance crisis visibility and scenario analysis','Extend group entity coverage where gaps remain'] },
+    { num:'PHASE 02', title:'Deepen Strategic Foundation', horizon:'Indicative · medium term', items:['Increase treasury\u2019s contribution to strategic capital and funding decisions','Strengthen system-generated forecasting and variance reporting','Improve access to consistent treasury data used for external reporting','Improve access to treasury data required for transaction modelling'] },
+    { num:'PHASE 03', title:'Sustain a Strategic Treasury', horizon:'Indicative · longer term', items:['Support intercompany funding at group scale through an internal bank model','Integrate treasury data into the board reporting cycle','Strengthen measurement of treasury efficiency and performance','Increase treasury\u2019s contribution to capital and funding decisions'] },
   ],
 };
 
 const ION_PILLARS = [
-  ['Real-Time Visibility','Cash, FX, liquidity and counterparty exposure, consolidated across every entity, intraday.'],
-  ['Automated Execution','Payment factory, FX netting, hedge execution, and cash pool optimisation, without manual intervention.'],
-  ['Capital Intelligence','Board-ready reporting, M&A modelling, stress scenarios, and rating agency packs, on demand.'],
-  ['Crisis Architecture','Pre-defined playbooks, counterparty monitoring, covenant alerting, and BCP capability, built in.'],
-  ['Group Scale','Internal bank model, intercompany lending, entity onboarding, and group KPI dashboards.'],
-  ['Proven Transition','Hundreds of treasury functions have made this journey with ION. The playbook is defined.'],
+  ['Real-Time Visibility','Cash, FX, liquidity and counterparty exposure, consolidated across entities intraday.'],
+  ['Automated Execution','Payment factory, FX netting, hedge execution and cash pool optimisation, reducing manual effort.'],
+  ['Strategic Capital Intelligence','The treasury data and analytical foundation that supports capital planning, funding and external reporting.'],
+  ['Crisis Resilience','Counterparty and position visibility, scenario analysis and covenant-related monitoring to support response preparedness.'],
+  ['Group Scale','Internal bank model, intercompany funding, entity onboarding and automated group reporting.'],
+  ['Proven Transition','Many treasury functions have strengthened their technology foundation with ION.'],
 ];
 
 // ══════════════════════════════════════════════ STATE
 const RKEYS = REGIMES.map(r=>r.key);
-let S = { model:null, company:'', name:'', role:'', contact:'', entities:'', currentDim:0, answers:{} };
+let S = { model:null, company:'', name:'', role:'', contact:'', entities:'', currentDim:0, answers:{}, _autoNA:{} };
 let REPORT_FROM_LINK = false;
 RKEYS.forEach(k=>{ S.answers[k]=[]; });
 
@@ -883,9 +950,13 @@ function activeModel(){ return MODELS.find(m=>m.id===S.model) || MODELS[0]; }
 function totalQ(){ return REGIMES.length*4; }
 function countAnswered(k){ return (S.answers[k]||[]).filter(v=>v!==undefined).length; }
 function totalAnswered(){ return RKEYS.reduce((a,k)=>a+countAnswered(k),0); }
-function rag(pct){ return pct>=68?'green':pct>=33?'amber':'red'; }
-function bandLabel(pct){ return pct>=85?'Strategic':pct>=68?'Advanced':pct>=50?'Operational':pct>=33?'Developing':'Foundational'; }
+function rag(pct){ if(pct===null||pct===undefined) return 'na'; return pct>=68?'green':pct>=33?'amber':'red'; }
+function bandLabel(pct){ if(pct===null||pct===undefined) return 'N/A'; return pct>=85?'Strategic':pct>=68?'Advanced':pct>=50?'Operational':pct>=33?'Developing':'Foundational'; }
 function narTier(pct){ return pct>=68?'high':pct>=42?'mid':'low'; }
+// ── N/A helpers ── genuine "not applicable" responses are the last option on
+//    questions flagged na:true. They are excluded from scoring & gaps entirely.
+function naIndex(key,qi){ const q=QS[key][qi]; return (q&&q.na) ? q.opts.length-1 : -1; }
+function isNAsel(key,qi,ai){ return ai!==undefined && ai!==null && ai===naIndex(key,qi); }
 
 // ══════════════════════════════════════════════ SETUP
 function modelCardHTML(m, on, handler){
@@ -990,6 +1061,15 @@ function renderDim(di){
     const sel=ans[qi];
     const risk = qi===0?'high':(qi===qs.length-1?'low':'medium');
     const impact = qi===0?impacts[0]:(qi===qs.length-1?impacts[2]:impacts[1]);
+    const autoSkipped = (dim.key==='vol' && qi===1 && S._autoNA['vol-1']);
+    if(autoSkipped){
+      return `<div class="qcard answered" id="qc-${di}-${qi}" style="opacity:.72">
+        <div class="qnum">${dim.id} · ${q.sc} · Q${qi+1} / ${qs.length}</div>
+        <span class="qimpact low">○ Not Applicable</span>
+        <div class="qtext">${q.t}</div>
+        <div class="dim-hed-desc" style="margin:6px 0 0;font-size:12px">Automatically classified as <strong>N/A</strong> because you indicated no material foreign currency exposure in the previous question. This question is excluded from scoring. To answer it, change your response to the FX Exposure Visibility question above.</div>
+      </div>`;
+    }
     return `<div class="qcard ${sel!==undefined?'answered':''}" id="qc-${di}-${qi}">
       <div class="qnum">${dim.id} · ${q.sc} · Q${qi+1} / ${qs.length}</div>
       <span class="qimpact ${risk}">${impact}</span>
@@ -1019,6 +1099,18 @@ function renderDim(di){
 }
 function answer(di,qi,oi,btn){
   const dim=REGIMES[di]; const ans=S.answers[dim.key]; ans[qi]=oi;
+  // ── Auto-skip: if FX Exposure Visibility (vol · Q1) is answered N/A,
+  //    auto-classify FX Hedging Programme (vol · Q2) as N/A and skip it.
+  //    If FX Exposure Visibility is later changed away from N/A, clear the
+  //    auto-assignment (only if it was auto-set, never a manual choice).
+  if(dim.key==='vol' && qi===0){
+    if(isNAsel('vol',0,oi)){
+      ans[1]=naIndex('vol',1); S._autoNA['vol-1']=true;
+    } else if(S._autoNA['vol-1']){
+      ans[1]=undefined; delete S._autoNA['vol-1'];
+    }
+    renderDim(di); return; // re-render so the skipped question reflects state
+  }
   const card=document.getElementById(`qc-${di}-${qi}`);
   card.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel'); card.classList.add('answered');
@@ -1039,37 +1131,56 @@ function navDim(dir){
 
 // ══════════════════════════════════════════════ SCORING
 function getScores(){
+  // N/A scoring logic:
+  //  • N/A responses are never scored (never 0, never top).
+  //  • N/A questions are excluded from the applicable denominator.
+  //  • Remaining applicable questions keep equal within-regime weighting
+  //    (denominator = applicable count × 4), i.e. reweighted automatically.
+  //  • A regime where every question is N/A is flagged naRegime and excluded
+  //    from the overall so genuine N/A never reduces the maturity score.
   const res={};
   RKEYS.forEach((k,i)=>{
-    const ans=S.answers[k]; let raw=0;
-    ans.forEach(ai=>{ if(ai!==undefined) raw+=(ai+1); });
-    const pct=Math.round((raw/16)*100);
-    res[k]={raw, max:16, pct, weight:activeModel().w[i]};
+    const ans=S.answers[k]; let raw=0, applicable=0, na=0;
+    ans.forEach((ai,qi)=>{
+      if(ai===undefined||ai===null) return;
+      if(isNAsel(k,qi,ai)){ na++; return; }   // exclude N/A from scoring
+      raw+=(ai+1); applicable++;
+    });
+    const max=applicable*4;
+    const naRegime = applicable===0 && na>0;
+    const pct = max>0 ? Math.round((raw/max)*100) : null;
+    res[k]={raw, max, applicable, na, naRegime, pct, weight:activeModel().w[i]};
   });
   return res;
 }
 function overallPct(scores){
-  const w=activeModel().w; const wSum=w.reduce((a,b)=>a+b,0);
-  const weighted=RKEYS.reduce((a,k,i)=>a+(scores[k].pct/100)*w[i],0)/wSum;
-  return Math.round(weighted*100);
+  // Reweight across applicable regimes only; fully-N/A regimes are dropped.
+  const w=activeModel().w; let num=0, wSum=0;
+  RKEYS.forEach((k,i)=>{
+    if(scores[k].naRegime || scores[k].pct===null) return;
+    num += (scores[k].pct/100)*w[i]; wSum += w[i];
+  });
+  return wSum>0 ? Math.round((num/wSum)*100) : 0;
 }
 function rawOverallPct(scores){
-  const raw=RKEYS.reduce((a,k)=>a+scores[k].raw,0);
-  return Math.round((raw/80)*100);
+  let raw=0, max=0;
+  RKEYS.forEach(k=>{ raw+=scores[k].raw; max+=scores[k].max; });
+  return max>0 ? Math.round((raw/max)*100) : 0;
 }
 
 function buildRadarSVG(scores){
   const cx=200,cy=200,r=160,keys=RKEYS,n=keys.length;
   const angles=keys.map((_,i)=>((i/n)*2*Math.PI)-(Math.PI/2));
-  const colors={red:'#d93025',amber:'#c2410c',green:'#047857'};
+  const colors={red:'#d93025',amber:'#c2410c',green:'#047857',na:'#94a3b8'};
+  const pv=k=>scores[k].pct===null?0:scores[k].pct;
   const rings=[0.25,0.5,0.75,1].map(t=>{
     const pts=angles.map(a=>`${cx+r*t*Math.cos(a)},${cy+r*t*Math.sin(a)}`).join(' ');
     return `<polygon points="${pts}" fill="none" stroke="#cbd2dc" stroke-width="1"/>`;
   }).join('');
   const axes=angles.map(a=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="#cbd2dc" stroke-width="1"/>`).join('');
-  const pts=keys.map((k,i)=>{ const d=r*(scores[k].pct/100); return `${cx+d*Math.cos(angles[i])},${cy+d*Math.sin(angles[i])}`; }).join(' ');
+  const pts=keys.map((k,i)=>{ const d=r*(pv(k)/100); return `${cx+d*Math.cos(angles[i])},${cy+d*Math.sin(angles[i])}`; }).join(' ');
   const fill=`<polygon points="${pts}" fill="rgba(0,103,177,0.14)" stroke="#0067b1" stroke-width="2" stroke-linejoin="round"/>`;
-  const dots=keys.map((k,i)=>{ const d=r*(scores[k].pct/100); const x=cx+d*Math.cos(angles[i]), y=cy+d*Math.sin(angles[i]); return `<circle cx="${x}" cy="${y}" r="5" fill="${colors[rag(scores[k].pct)]}" stroke="#fff" stroke-width="2"/>`; }).join('');
+  const dots=keys.map((k,i)=>{ const d=r*(pv(k)/100); const x=cx+d*Math.cos(angles[i]), y=cy+d*Math.sin(angles[i]); return `<circle cx="${x}" cy="${y}" r="5" fill="${colors[rag(scores[k].pct)]}" stroke="#fff" stroke-width="2"/>`; }).join('');
   const labels=REGIMES.map((d,i)=>{
     const a=angles[i]; const lx=cx+(r+28)*Math.cos(a), ly=cy+(r+28)*Math.sin(a);
     const anchor=lx<cx-10?'end':lx>cx+10?'start':'middle';
@@ -1084,8 +1195,8 @@ function buildRegimeGrid(scores){
     return `<div class="regime-card rc-${r2}">
       <div class="rc-num" style="color:${dim.color}">${dim.id}</div>
       <div class="rc-name">${dim.name}</div>
-      <div class="rc-pct ${r2}">${sc.pct}%</div>
-      <div class="rc-bar"><div class="rc-bar-fill ${r2}" style="width:${sc.pct}%"></div></div>
+      <div class="rc-pct ${r2}">${sc.pct===null?'N/A':sc.pct+'%'}</div>
+      <div class="rc-bar"><div class="rc-bar-fill ${r2}" style="width:${sc.pct===null?0:sc.pct}%"></div></div>
       <div class="rc-label">${bandLabel(sc.pct)}</div>
     </div>`;
   }).join('');
@@ -1094,9 +1205,10 @@ function identifyGaps(){
   const out=[];
   REGIMES.forEach((r,ri)=>{
     (S.answers[r.key]||[]).forEach((ai,qi)=>{
-      if(ai===undefined) return;
+      if(ai===undefined||ai===null) return;
+      if(isNAsel(r.key,qi,ai)) return;   // N/A is never eligible for a gap
       const w=ai+1;
-      if(w<=2){ const g=GAPS[r.key][qi]; out.push({regime:ri, weight:w, ...g}); }
+      if(w<=2){ const g=GAPS[r.key][qi]; out.push({regime:ri, weight:w, variant:(w===1?'A':'B'), ...g}); }
     });
   });
   out.sort((a,b)=> a.weight-b.weight);
@@ -1122,13 +1234,14 @@ function generateReport(){
     <text x="64" y="75" text-anchor="middle" fill="${ringCol}" font-family="JetBrains Mono,monospace" font-size="8" letter-spacing="1">${bandLabel(pct).toUpperCase()}</text>
   </svg>`;
 
-  const strongest=RKEYS.reduce((a,k)=>scores[k].pct>scores[a].pct?k:a,RKEYS[0]);
+  const applicableKeys=RKEYS.filter(k=>scores[k].pct!==null);
+  const strongest=applicableKeys.length?applicableKeys.reduce((a,k)=>scores[k].pct>scores[a].pct?k:a,applicableKeys[0]):RKEYS[0];
   const strongestIdx=RKEYS.indexOf(strongest);
   const gapsAll=identifyGaps();
   // ── Priority Focus Area ──
   //   Gaps determine the focus area WHEN gaps exist; the operating model
   //   determines the focus area WHEN there are no capability gaps.
-  //   • If there are Priority Capability Gaps → name the Focus Area after the
+  //   • If there are Priority Technology & Capability Gaps → name the Focus Area after the
   //     regime the MAJORITY of those priority gaps fall into.
   //   • If there are NO capability gaps → nothing to derive it from, so assign
   //     the Focus Area from the Operating Model → Regime mapping below. ──
@@ -1142,7 +1255,7 @@ function generateReport(){
     whitelabel:'scale',   // Bank / Institutional White-Label → Group Scale
     other:'ops'           // Other                          → Daily Operations
   };
-  const allEqual=RKEYS.every(k=>scores[k].pct===scores[RKEYS[0]].pct);
+  const allEqual=applicableKeys.length?applicableKeys.every(k=>scores[k].pct===scores[applicableKeys[0]].pct):true;
   let weakestIdx=-1;
   if(gapsAll.length>0){
     // regime where the majority of priority gaps fall
@@ -1162,9 +1275,16 @@ function generateReport(){
 
   const dcards=REGIMES.map((dim,i)=>{
     const sc=scores[dim.key]; const r2=rag(sc.pct);
-    const nar=NAR[dim.key][narTier(sc.pct)];
+    const nar = sc.naRegime
+      ? 'Based on your responses, the questions in this regime were indicated as not applicable to your organisation. This regime is therefore excluded from your maturity scoring and does not affect your overall result.'
+      : NAR[dim.key][narTier(sc.pct)];
     const rows=(S.answers[dim.key]||[]).map((ai,qi)=>{
-      const q=QS[dim.key][qi]; const w=ai+1;
+      const q=QS[dim.key][qi];
+      if(ai===undefined||ai===null) return '';
+      if(isNAsel(dim.key,qi,ai)){
+        return `<div class="finding"><div class="fic">➖</div><div class="ftxt"><span class="flbl">${q.sc} · N/A</span>${q.opts[ai]}</div></div>`;
+      }
+      const w=ai+1;
       const wc = w>=3?'✅':(w===2?'⚠️':'🔴');
       return `<div class="finding"><div class="fic">${wc}</div><div class="ftxt"><span class="flbl">${q.sc}</span>${q.opts[ai]}</div></div>`;
     }).join('');
@@ -1173,8 +1293,8 @@ function generateReport(){
         <div class="dcard-num" style="color:${dim.color}">${dim.id}</div>
         <div><div class="dcard-name">${dim.name}</div><div class="dcard-sub">${dim.sub}</div></div>
         <div class="score-bar-wrap">
-          <div class="sbar-lbl"><span>${bandLabel(sc.pct)}</span><span>${sc.pct}%</span></div>
-          <div class="sbar-track"><div class="sbar-fill ${r2}" style="width:${sc.pct}%"></div></div>
+          <div class="sbar-lbl"><span>${bandLabel(sc.pct)}</span><span>${sc.pct===null?'N/A':sc.pct+'%'}</span></div>
+          <div class="sbar-track"><div class="sbar-fill ${r2}" style="width:${sc.pct===null?0:sc.pct}%"></div></div>
         </div>
         <div class="rag ${r2}"></div>
         <div class="chev">▾</div>
@@ -1189,11 +1309,12 @@ function generateReport(){
 
   const gapHTML=gapsAll.slice(0,6).map((g,i)=>{
     const rc2=REGIMES[g.regime].color;
+    const desc = g.variant==='A' ? g.descA : g.descB;
     return `<div class="qcard" style="border-left:4px solid ${rc2}">
       <div class="qnum">Priority ${i+1} · Regime ${REGIMES[g.regime].id} · ${REGIMES[g.regime].name}</div>
       <div class="qtext" style="font-size:15px">${g.title}</div>
-      <div class="dim-hed-desc" style="margin-bottom:12px">${g.desc}</div>
-      <div class="recbox"><div class="reclbl">ION addresses this by</div><div class="ftxt" style="color:var(--text)">${g.ion}</div></div>
+      <div class="dim-hed-desc" style="margin-bottom:12px">${desc}</div>
+      <div class="recbox"><div class="reclbl">How ION can help</div><div class="ftxt" style="color:var(--text)">${g.howIon}</div></div>
     </div>`;
   }).join('');
 
@@ -1233,7 +1354,7 @@ function generateReport(){
       <div class="radar-wrap">
         ${buildRadarSVG(scores)}
         <div class="radar-legend">
-          ${REGIMES.map((d)=>{const sc=scores[d.key];const r2=rag(sc.pct);return `<div class="rl-item"><div class="rl-dot" style="background:${d.color}"></div><div class="rl-name">${d.name}</div><div class="rl-score ${r2}">${sc.pct}%</div></div>`;}).join('')}
+          ${REGIMES.map((d)=>{const sc=scores[d.key];const r2=rag(sc.pct);return `<div class="rl-item"><div class="rl-dot" style="background:${d.color}"></div><div class="rl-name">${d.name}</div><div class="rl-score ${r2}">${sc.pct===null?'N/A':sc.pct+'%'}</div></div>`;}).join('')}
         </div>
       </div>
     </div>
@@ -1247,19 +1368,19 @@ function generateReport(){
     <div class="sl" style="margin-bottom:16px">Regime-by-Regime Analysis</div>
     <div class="dcards">${dcards}</div>
 
-    <div class="sl" style="margin:36px 0 16px">Priority Capability Gaps</div>
-    <p class="impact-t" style="margin-bottom:18px">The gaps below are the highest-priority areas where your current technology stack or processes are limiting your treasury function, ordered by how material they are for a ${m.name} function.</p>
-    <div class="dcards">${gapHTML || '<div class="qcard"><div class="ftxt">No capability gaps triggered — every response scored at or near target state.</div></div>'}</div>
+    <div class="sl" style="margin:36px 0 16px">Priority Technology &amp; Capability Gaps</div>
+    <p class="impact-t" style="margin-bottom:18px">The gaps below highlight the highest-priority areas where your current systems, processes or technology infrastructure may be limiting treasury's ability to operate effectively at the scale and complexity of your organisation.</p>
+    <div class="dcards">${gapHTML || '<div class="qcard"><div class="ftxt">No capability gaps triggered — every applicable response scored at or near target state.</div></div>'}</div>
 
-    <div class="sl" style="margin:36px 0 16px">Recommended Transformation Roadmap</div>
-    <p class="impact-t" style="margin-bottom:18px">Moving from operational to strategic treasury is a phased, architectural journey. Based on your maturity profile as a ${m.name} function, this is the sequence that typically delivers the fastest return and lowest disruption.</p>
+    <div class="sl" style="margin:36px 0 16px">Indicative Transformation Roadmap</div>
+    <p class="impact-t" style="margin-bottom:18px">Moving from operational to strategic treasury is a phased journey. Based on your responses, the following roadmap illustrates how organisations with a similar maturity profile may progressively strengthen their treasury technology and operating foundation. The appropriate sequence and priorities will depend on your existing architecture, business requirements and transformation objectives.</p>
     <div class="regime-grid" style="grid-template-columns:repeat(3,1fr)">${roadHTML}</div>
 
     <div class="impact-box" style="margin-top:36px">
       <div class="impact-h">Why ION Treasury</div>
-      <p class="impact-t" style="margin-bottom:18px">ION Treasury is not just a TMS. It is a <strong style="color:var(--white)">capital governance platform</strong> that connects daily operations, market risk, crisis resilience, strategic capital intelligence, and group-scale coordination into a single architecture. The gap between operational and strategic treasury is an <strong style="color:var(--white)">infrastructure gap</strong> — and that is what ION provides.</p>
+      <p class="impact-t" style="margin-bottom:18px">Your assessment suggests that the next stage of treasury maturity may depend less on adding more manual processes and more on strengthening the technology foundation beneath the function. As complexity increases, fragmented systems, spreadsheets and manual workflows can become structural constraints on visibility, control and decision-making. ION Treasury provides the technology foundation to address these challenges, connecting daily operations, market risk, crisis resilience, strategic capital intelligence and group-scale coordination within an integrated treasury architecture.</p>
       <div class="regime-grid" style="grid-template-columns:repeat(3,1fr)">${pillarHTML}</div>
-      <p class="impact-t" style="margin-top:18px"><strong style="color:var(--white)">Most treasury architectures were built for yesterday's treasury. ION is built for what's next.</strong></p>
+      <p class="impact-t" style="margin-top:18px"><strong style="color:var(--white)">Control Cash, Command Capital, Shape Strategy — is your technology ready to take you there?</strong></p>
     </div>
 
     <div class="cta-box">
@@ -1276,7 +1397,12 @@ function generateReport(){
       <button class="btn-outline" onclick="downloadReport()">Download Report as PDF
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
       </button>
-      <div class="cta-fine">Confidential · For internal and client use only · ION Group</div>
+    </div>
+
+    <div class="viz-section" style="margin-top:24px;background:transparent;border:none;padding:20px 0 0">
+      <div style="font-weight:700;color:var(--white);font-size:14px;margin-bottom:8px">About this assessment</div>
+      <p class="impact-t" style="font-size:12px;line-height:1.7">This report is generated from the information provided through the ION Treasury Strategic Readiness Assessment and is intended for informational and benchmarking purposes only. The findings and suggested priorities are indicative and do not constitute financial, investment, legal or other professional advice. Any actions should be evaluated in the context of your organisation's specific circumstances, requirements and policies.</p>
+      <div class="cta-fine" style="margin-top:16px;text-align:left"><strong>Confidential · For recipient use only · ION Group</strong></div>
     </div>`;
   goto('s-report');
   setTimeout(()=>{ REGIMES.forEach((_,i)=>{ const k=RKEYS[i]; if(rag(scores[k].pct)!=='green'){ const b=document.getElementById(`rb-${i}`),h=document.getElementById(`rh-${i}`); if(b)b.classList.add('open'); if(h)h.classList.add('open'); } }); },350);
