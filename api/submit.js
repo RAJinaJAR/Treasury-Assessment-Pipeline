@@ -1,61 +1,54 @@
 // ─────────────────────────────────────────────────────────────
-// Cloudflare Pages Function
-// File path in your repo MUST be:  functions/api/submit.js
+// Vercel Serverless Function
+// File path in your repo MUST be:  api/submit.js   (at the REPO ROOT)
 //   → serves POST /api/submit  (frontend fetch('/api/submit') unchanged)
 //
-// Handles THREE request types, all keyed by a shared `sessionId` so Power
-// Automate can ADD one row per taker and UPDATE it on later actions:
+// NOTE: This replaces the old Cloudflare Pages Function. On Vercel the handler
+// signature is (req, res) and the file lives at /api/submit.js — NOT
+// functions/api/submit.js. Deploying the Cloudflare version to Vercel is what
+// produced the 500 Internal Server Error.
 //
-//   requestType = 'completion' → AUTOMATIC, fires the moment the report renders
-//                                (viewing the report IS the save). Power Automate
-//                                ADDS the pipeline row. This is the number you
-//                                count for "how many people actually took it".
-//   requestType = 'meeting'    → user clicked "Speak with an ION Treasury
-//                                Specialist". Power Automate mails the assessment
-//                                AND updates the row: OptedToSpecialist = Yes.
-//   requestType = 'pdf'        → user clicked "Download Report as PDF".
-//                                Power Automate updates the row: DownloadedPDF = Yes.
+// Handles THREE request types, all keyed by `sessionId`:
+//   requestType = 'completion' → automatic, fires when the report renders.
+//                                Power Automate ADDS the pipeline row.
+//   requestType = 'meeting'    → "Speak with an ION Treasury Specialist".
+//                                Mails the assessment + flips OptedToSpecialist=Yes.
+//   requestType = 'pdf'        → "Download Report as PDF". Flips DownloadedPDF=Yes.
 //
-// Payload fields now include: sessionId, phone, acceptedTerms, consentedToContact.
-//
-// Secret: Cloudflare → Pages project → Settings → Environment variables
-//         → add TEAMS_WEBHOOK_URL
+// Env var: Vercel → Project → Settings → Environment Variables
+//          → add TEAMS_WEBHOOK_URL  (then redeploy)
 // ─────────────────────────────────────────────────────────────
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST,OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
 
-export async function onRequestOptions() {
-  return new Response(null, { status: 204, headers: CORS });
-}
+export default async function handler(req, res) {
+  // ---- CORS (harmless for same-origin; helps if you ever call cross-origin) ----
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
-  const jsonHeaders = { ...CORS, 'Content-Type': 'application/json' };
-  const WEBHOOK_URL = env.TEAMS_WEBHOOK_URL;
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
+  const WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
   if (!WEBHOOK_URL) {
     console.error('TEAMS_WEBHOOK_URL not set');
-    return new Response(
-      JSON.stringify({ error: 'Webhook not configured' }),
-      { status: 500, headers: jsonHeaders }
-    );
+    return res.status(500).json({ error: 'Webhook not configured' });
   }
 
   try {
-    const d = await request.json();
+    // Vercel auto-parses JSON bodies, but guard against string bodies just in case.
+    const d = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
 
-    // Default to 'completion' so any older/edge payload still lands as a taker.
+    // Default to 'completion' so any edge payload still lands as a taker.
     const requestType = d.requestType || 'completion';
     const isMeeting = requestType === 'meeting';
     const isPdf = requestType === 'pdf';
-    const isCompletion = requestType === 'completion';
 
     const ragEmoji = d.rag === 'Red' ? '🔴' : d.rag === 'Amber' ? '🟡' : '🟢';
 
-    // Title makes it obvious in the Teams channel which kind of event this is.
     const titleText = isMeeting
       ? `📅 Specialist Requested: ${d.company || 'Unknown'}`
       : isPdf
@@ -135,7 +128,6 @@ export async function onRequestPost(context) {
           },
         },
       ],
-      // Full payload as JSON string for Power Automate to parse
       summary: JSON.stringify(d),
     };
 
@@ -148,21 +140,12 @@ export async function onRequestPost(context) {
     if (!webhookRes.ok) {
       const errText = await webhookRes.text();
       console.error('Webhook error:', webhookRes.status, errText);
-      return new Response(
-        JSON.stringify({ error: 'Webhook delivery failed', status: webhookRes.status }),
-        { status: 502, headers: jsonHeaders }
-      );
+      return res.status(502).json({ error: 'Webhook delivery failed', status: webhookRes.status });
     }
 
-    return new Response(
-      JSON.stringify({ ok: true, message: 'Submitted successfully', requestType }),
-      { status: 200, headers: jsonHeaders }
-    );
+    return res.status(200).json({ ok: true, message: 'Submitted successfully', requestType });
   } catch (err) {
     console.error('Submit error:', err);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: jsonHeaders }
-    );
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
