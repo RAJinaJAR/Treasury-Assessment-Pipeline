@@ -93,6 +93,24 @@ h1 em{font-style:italic;color:var(--gold)}
 .md{font-size:11px;color:var(--muted);line-height:1.5}
 .mf{margin-top:10px;font-size:10px;color:var(--teal);font-weight:500}
 .ffoot{display:flex;justify-content:center}
+/* ── CONSENT CHECKBOXES ── */
+.consent-block{display:flex;flex-direction:column;gap:16px;margin:8px 0 32px;padding:20px 22px;background:var(--card);border:1px solid var(--border2);border-radius:7px}
+.consent-row{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.consent-cb{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--gold);cursor:pointer}
+.consent-txt{font-size:13px;color:var(--white);line-height:1.55}
+.consent-sub{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.terms-link{color:var(--gold);text-decoration:underline;cursor:pointer}
+.terms-link:hover{color:var(--gold2)}
+.req-star{color:#d93025;font-weight:700}
+/* ── TERMS MODAL ── */
+#terms-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,26,53,.72);backdrop-filter:blur(6px);padding:40px 24px;overflow-y:auto}
+.terms-panel{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-top:4px solid var(--gold);border-radius:8px;padding:32px}
+.terms-panel h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--white);margin-bottom:4px}
+.terms-panel .terms-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.terms-panel ol{margin:0 0 8px;padding-left:20px}
+.terms-panel li{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.terms-panel li strong{display:block;color:var(--white);font-size:12px;margin-bottom:2px}
+.terms-foot{display:flex;gap:12px;margin-top:22px}
 
 /* ── ASSESSMENT SHELL ── */
 #s-assess{flex-direction:row;min-height:100vh}
@@ -524,6 +542,7 @@ h1 em { color:#4aa3e0; }
 
 /* 6 · Regime narrative paragraphs — a touch darker on white */
 .nar{ color:#3f4a5a !important; }
+.h1-sub{font-size:.44em;display:inline-block}
 
 </style>
 </head>
@@ -540,9 +559,8 @@ h1 em { color:#4aa3e0; }
     <div class="land-bg"></div>
     <div class="land-inner">
       <div class="eyebrow">Treasury Maturity Assessment</div>
-      <h1>How <em>strategic</em> is your treasury?<br>Is your <em>technology</em> ready to take you there?<br>Find out how ready you are.</h1>
+      <h1>How <em>strategic</em> is your treasury?<span class="h1-sub"><br>Is your technology ready to take you there?<br>Find out how ready you are.</span></h1>
       <p class="lead">Answer 20 questions about how your treasury operates today, from technology and automation to process maturity, visibility and decision support. Receive a personalised maturity report across the five regimes of modern treasury, weighted to your operating model, and discover where your current treasury infrastructure may be enabling, or limiting, your progression from operational to strategic treasury.</p>
-      <p class="land-fine" style="margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto">The assessment provides an indicative maturity view based on the information you provide.</p>
       <div class="dtags">
         <span class="dtag d1">01 · Daily Operations</span>
         <span class="dtag d2">02 · Market Volatility</span>
@@ -554,6 +572,8 @@ h1 em { color:#4aa3e0; }
         Begin the Assessment
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
+      <br>
+      <p class="land-fine" style="margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto">The assessment provides an indicative maturity view based on the information you provide.</p>
       <div class="land-fine">20 questions · 5 regimes · approx. 10 minutes · no right or wrong answers</div>
     </div>
   </div>
@@ -599,11 +619,23 @@ h1 em { color:#4aa3e0; }
     </div>
     <div class="frow">
       <div class="fg"><label class="fl">Work Email *</label><input id="i-contact" class="fi" type="text" placeholder="name@company.com"></div>
-      <div class="fg"></div>
+      <div class="fg"><label class="fl">Phone Number *</label><input id="i-phone" class="fi" type="tel" placeholder="Include country code"></div>
     </div>
     <div class="sl" style="margin-bottom:12px">Select your operating model *</div>
     <p class="sd" style="margin-bottom:18px">This tailors the scoring engine to the structural fit for your treasury function, so your results reflect your operating reality rather than a generic average.</p>
     <div class="mgrid" id="mgrid"></div>
+    <div class="consent-block">
+      <label class="consent-row" for="i-terms">
+        <input type="checkbox" id="i-terms" class="consent-cb" onchange="validateConsent()">
+        <span class="consent-txt">I have read and accept the <a href="#" class="terms-link" onclick="openTermsModal();return false;">prize draw terms</a>, and I understand ION Treasury will process the details above to generate my assessment report. <span class="req-star">*</span></span>
+      </label>
+      <label class="consent-row" for="i-optin">
+        <input type="checkbox" id="i-optin" class="consent-cb">
+        <span class="consent-txt">I would like ION Treasury to contact me about my results and related insights.
+          <span class="consent-sub">Optional. Your entry into the prize draw does not depend on this, and you can withdraw it at any time.</span>
+        </span>
+      </label>
+    </div>
     <div class="ffoot">
       <button class="btn-next" id="setup-btn" onclick="startAssessment()" disabled>
         Start Assessment
@@ -677,6 +709,32 @@ h1 em { color:#4aa3e0; }
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
       <button class="btn-back" onclick="closeModelModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRIZE DRAW TERMS MODAL -->
+<div id="terms-modal">
+  <div class="terms-panel">
+    <div class="terms-eyebrow">ION Treasury Strategic Readiness Assessment · AFP 2026</div>
+    <h3>Prize draw terms</h3>
+    <ol>
+      <li><strong>Promoter</strong>ION Group, registered address to confirm.</li>
+      <li><strong>How to enter</strong>Complete the ION Treasury Strategic Readiness Assessment and view your report. One entry per person. Duplicate entries from the same email address will be treated as a single entry.</li>
+      <li><strong>Who can enter</strong>Open to attendees of AFP 2026 aged 18 or over. Employees of ION Group and their immediate families are not eligible. Any further eligibility restrictions to confirm with legal.</li>
+      <li><strong>Entry period</strong>Entries open [date, time, timezone] and close [date, time, timezone].</li>
+      <li><strong>The prize</strong>One [exact model and specification]. The prize is as stated, is not transferable, and no cash alternative is available. The promoter reserves the right to substitute a prize of equal or greater value.</li>
+      <li><strong>How the winner is drawn</strong>The winner is selected at random from all eligible entries. The draw takes place on [date] at [time and location]. Odds of winning depend on the number of eligible entries received.</li>
+      <li><strong>Notifying the winner</strong>The winner will be contacted using the email address supplied at entry within [X] days of the draw. If the winner does not respond within [X] days, the promoter may draw an alternative winner.</li>
+      <li><strong>Tax</strong>Any tax reporting or withholding obligations arising from the prize to be confirmed with ION finance and legal, and stated here.</li>
+      <li><strong>How we use your details</strong>The details you provide are used to generate your assessment report and to administer this prize draw. If you tick the optional box, ION Treasury will also contact you about your results and related insights. You can withdraw that consent at any time. Link to the ION privacy notice and the retention period to confirm.</li>
+      <li><strong>General</strong>Governing law and any further standard clauses to confirm with legal.</li>
+    </ol>
+    <div class="terms-foot">
+      <button class="btn-next" onclick="acceptTermsFromModal()">Accept &amp; Close
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="btn-back" onclick="closeTermsModal()">Close</button>
     </div>
   </div>
 </div>
@@ -936,8 +994,15 @@ const ION_PILLARS = [
 
 // ══════════════════════════════════════════════ STATE
 const RKEYS = REGIMES.map(r=>r.key);
-let S = { model:null, company:'', name:'', role:'', contact:'', entities:'', currentDim:0, answers:{}, _autoNA:{} };
+let S = { model:null, company:'', name:'', role:'', contact:'', phone:'', entities:'', consentContact:false, sessionId:'', currentDim:0, answers:{}, _autoNA:{} };
 let REPORT_FROM_LINK = false;
+let COMPLETION_LOGGED = false;   // guards the automatic "assessment taken" ping
+// Stable per-session id so Teams/Power Automate can UPDATE the same row when the
+// user later opts to speak to a specialist or downloads the PDF.
+function newSessionId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
+}
 RKEYS.forEach(k=>{ S.answers[k]=[]; });
 
 // ══════════════════════════════════════════════ HELPERS
@@ -972,17 +1037,40 @@ function renderModelGrid(){
 function pickModel(id){
   S.model=id;
   renderModelGrid();
-  document.getElementById('setup-btn').disabled=false;
+  validateConsent();
+}
+// Start Assessment stays disabled until BOTH an operating model is chosen AND
+// the mandatory prize-draw terms box is ticked.
+function validateConsent(){
+  const modelOk=!!S.model;
+  const terms=document.getElementById('i-terms');
+  const termsOk=terms && terms.checked;
+  const btn=document.getElementById('setup-btn');
+  if(btn) btn.disabled=!(modelOk && termsOk);
+}
+// ── Prize draw terms modal ──
+function openTermsModal(){ document.getElementById('terms-modal').style.display='block'; }
+function closeTermsModal(){ document.getElementById('terms-modal').style.display='none'; }
+function acceptTermsFromModal(){
+  const cb=document.getElementById('i-terms'); if(cb){ cb.checked=true; }
+  validateConsent();
+  closeTermsModal();
 }
 function startAssessment(){
   const co=document.getElementById('i-co').value.trim();
   if(!co){ document.getElementById('i-co').style.borderColor='#d93025'; document.getElementById('i-co').focus(); return; }
   const contact=document.getElementById('i-contact').value.trim();
   if(!contact){ document.getElementById('i-contact').style.borderColor='#d93025'; document.getElementById('i-contact').focus(); return; }
-  S.company=co; S.contact=contact;
+  const phone=document.getElementById('i-phone').value.trim();
+  if(!phone){ document.getElementById('i-phone').style.borderColor='#d93025'; document.getElementById('i-phone').focus(); return; }
+  const terms=document.getElementById('i-terms');
+  if(!terms || !terms.checked){ terms && terms.focus(); return; }
+  S.company=co; S.contact=contact; S.phone=phone;
   S.name=document.getElementById('i-nm').value.trim();
   S.role=document.getElementById('i-role').value;
   S.entities=document.getElementById('i-ent').value;
+  S.consentContact=document.getElementById('i-optin').checked;
+  S.sessionId=newSessionId();
   if(!S.model) S.model='enterprise';
   buildNavItems();
   updateModelChip();
@@ -1384,12 +1472,8 @@ function generateReport(){
     </div>
 
     <div class="cta-box">
-      <div class="cta-h">${REPORT_FROM_LINK ? 'Your Results' : 'Save & Share Your Results'}</div>
-      <p class="cta-d">${REPORT_FROM_LINK ? 'Download the full report with regime scores, gaps and roadmap as a PDF.' : 'Submit your results securely to our team, or download the full report as a PDF.'}</p>
-      ${REPORT_FROM_LINK ? '' : `
-      <button class="btn-cta" id="submit-btn" onclick="submitResults()" style="margin-bottom:12px">Save Results
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button><br>`}
+      <div class="cta-h">${REPORT_FROM_LINK ? 'Your Results' : 'Your Results Are Saved'}</div>
+      <p class="cta-d">${REPORT_FROM_LINK ? 'Download the full report with regime scores, gaps and roadmap as a PDF.' : 'Your assessment has been recorded. Speak with a specialist, or download the full report as a PDF.'}</p>
       ${REPORT_FROM_LINK ? '' : `
       <button class="btn-cta" id="meeting-btn" onclick="requestMeeting()" style="margin-bottom:12px">Speak with an ION Treasury Specialist
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 12h8M8 8h8M8 16h5M21 12a9 9 0 0 1-13 8L3 21l1-5a9 9 0 1 1 17-4z"/></svg>
@@ -1405,39 +1489,50 @@ function generateReport(){
       <div class="cta-fine" style="margin-top:16px;text-align:left"><strong>Confidential · For recipient use only · ION Group</strong></div>
     </div>`;
   goto('s-report');
+  logCompletion();   // auto-save: viewing the report IS the save action now
   setTimeout(()=>{ REGIMES.forEach((_,i)=>{ const k=RKEYS[i]; if(rag(scores[k].pct)!=='green'){ const b=document.getElementById(`rb-${i}`),h=document.getElementById(`rh-${i}`); if(b)b.classList.add('open'); if(h)h.classList.add('open'); } }); },350);
 }
 function toggleCard(i){ document.getElementById(`rb-${i}`).classList.toggle('open'); document.getElementById(`rh-${i}`).classList.toggle('open'); }
 
 // ══════════════════════════════════════════════ SHAREABLE URL
 function generateReportUrl(){
-  const state={c:S.company,n:S.name,r:S.role,m:S.model,ct:S.contact,e:S.entities,a:{}};
+  const state={c:S.company,n:S.name,r:S.role,m:S.model,ct:S.contact,ph:S.phone,e:S.entities,a:{}};
   RKEYS.forEach(k=>{ state.a[k]=(S.answers[k]||[]).map(v=>v===undefined?null:v); });
   const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
   return window.location.origin+window.location.pathname+'#'+encoded;
 }
 
 // ══════════════════════════════════════════════ SUBMIT
-async function submitResults(){
-  const btn=document.getElementById('submit-btn'); if(btn.disabled) return;
-  btn.disabled=true; btn.innerHTML='⏳ Submitting...'; btn.style.opacity='0.6';
+// Shared payload builder so completion / meeting / pdf all key to the same row.
+function buildPayload(requestType){
+  const scores=getScores(); const pct=overallPct(scores);
+  const rag3 = pct<33?'Red':pct<68?'Amber':'Green';
+  const answerDetails=[];
+  REGIMES.forEach(r=>{ (S.answers[r.key]||[]).forEach((ai,qi)=>{ if(ai!==undefined){ const q=QS[r.key][qi]; answerDetails.push({ regime:r.name, regimeId:r.id, questionIndex:qi, scenario:q.sc, question:q.t, selectedOption:q.opts[ai], score:ai+1 }); } }); });
+  return {
+    sessionId:S.sessionId,
+    timestamp:new Date().toISOString(),
+    company:S.company, name:S.name, contact:S.contact, phone:S.phone, role:S.role,
+    model:activeModel().name, entities:S.entities,
+    acceptedTerms:'Yes',
+    consentedToContact:S.consentContact?'Yes':'No',
+    reg01:scores.ops.pct, reg02:scores.vol.pct, reg03:scores.shock.pct, reg04:scores.strat.pct, reg05:scores.scale.pct,
+    overall:pct, overallUnweighted:rawOverallPct(scores), rag:rag3,
+    requestType,
+    answers:answerDetails, reportUrl:generateReportUrl()
+  };
+}
+
+// AUTOMATIC completion capture — fires once when the report renders. This is
+// the row Power Automate ADDS. Later button clicks UPDATE this row via sessionId.
+function logCompletion(){
+  if(REPORT_FROM_LINK || COMPLETION_LOGGED) return;
+  COMPLETION_LOGGED = true;
   try{
-    const scores=getScores(); const pct=overallPct(scores);
-    const answerDetails=[];
-    REGIMES.forEach(r=>{ (S.answers[r.key]||[]).forEach((ai,qi)=>{ if(ai!==undefined){ const q=QS[r.key][qi]; answerDetails.push({ regime:r.name, regimeId:r.id, questionIndex:qi, scenario:q.sc, question:q.t, selectedOption:q.opts[ai], score:ai+1 }); } }); });
-    const rag3 = pct<33?'Red':pct<68?'Amber':'Green';
-    const payload={
-      timestamp:new Date().toISOString(),
-      company:S.company, name:S.name, contact:S.contact, role:S.role, model:activeModel().name, entities:S.entities,
-      reg01:scores.ops.pct, reg02:scores.vol.pct, reg03:scores.shock.pct, reg04:scores.strat.pct, reg05:scores.scale.pct,
-      overall:pct, overallUnweighted:rawOverallPct(scores), rag:rag3,
-      requestType:'assessment',
-      answers:answerDetails, reportUrl:generateReportUrl()
-    };
-    const res=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    btn.innerHTML='✓ Results Saved Successfully'; btn.style.background='#14804a'; btn.style.opacity='1';
-  }catch(err){ console.error('Submit failed:',err); btn.innerHTML='⚠ Failed — Click to Retry'; btn.style.background='#d93025'; btn.style.opacity='1'; btn.disabled=false; }
+    const payload=buildPayload('completion');
+    // fire-and-forget; keepalive lets it survive the tab closing
+    fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true}).catch(()=>{});
+  }catch(e){ console.error('Completion log failed:',e); }
 }
 
 // ── Speak with an ION Treasury Specialist → triggers Email 2 (meeting request) ──
@@ -1445,18 +1540,9 @@ async function requestMeeting(){
   const btn=document.getElementById('meeting-btn'); if(btn.disabled) return;
   btn.disabled=true; btn.innerHTML='⏳ Sending request...'; btn.style.opacity='0.6';
   try{
-    const scores=getScores(); const pct=overallPct(scores);
-    const answerDetails=[];
-    REGIMES.forEach(r=>{ (S.answers[r.key]||[]).forEach((ai,qi)=>{ if(ai!==undefined){ const q=QS[r.key][qi]; answerDetails.push({ regime:r.name, regimeId:r.id, questionIndex:qi, scenario:q.sc, question:q.t, selectedOption:q.opts[ai], score:ai+1 }); } }); });
-    const rag3 = pct<33?'Red':pct<68?'Amber':'Green';
-    const payload={
-      timestamp:new Date().toISOString(),
-      company:S.company, name:S.name, contact:S.contact, role:S.role, model:activeModel().name, entities:S.entities,
-      reg01:scores.ops.pct, reg02:scores.vol.pct, reg03:scores.shock.pct, reg04:scores.strat.pct, reg05:scores.scale.pct,
-      overall:pct, overallUnweighted:rawOverallPct(scores), rag:rag3,
-      requestType:'meeting',
-      answers:answerDetails, reportUrl:generateReportUrl()
-    };
+    // requestType:'meeting' → Power Automate both mails the assessment AND
+    // flips "Opted to talk with ION specialist" to Yes on the sessionId row.
+    const payload=buildPayload('meeting');
     const res=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!res.ok) throw new Error('HTTP '+res.status);
     btn.innerHTML='✓ Request Sent — We\u2019ll Be In Touch'; btn.style.background='#14804a'; btn.style.color='#fff'; btn.style.borderColor='#14804a'; btn.style.opacity='1';
@@ -1464,6 +1550,13 @@ async function requestMeeting(){
 }
 
 function downloadReport(){
+  // Log the PDF download click → flips "Downloaded the PDF" to Yes on the row.
+  if(!REPORT_FROM_LINK && S.sessionId){
+    try{
+      const payload=buildPayload('pdf');
+      fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true}).catch(()=>{});
+    }catch(e){ console.error('PDF log failed:',e); }
+  }
   REGIMES.forEach((_,i)=>{ const b=document.getElementById(`rb-${i}`),h=document.getElementById(`rh-${i}`); if(b)b.classList.add('open'); if(h)h.classList.add('open'); });
   setTimeout(()=>window.print(),250);
 }
@@ -1474,7 +1567,7 @@ window.addEventListener('DOMContentLoaded', function(){
   if(window.location.hash && window.location.hash.length>2){
     try{
       const data=JSON.parse(decodeURIComponent(escape(atob(window.location.hash.slice(1)))));
-      S.company=data.c||''; S.name=data.n||''; S.role=data.r||''; S.model=data.m||'enterprise'; S.contact=data.ct||''; S.entities=data.e||'';
+      S.company=data.c||''; S.name=data.n||''; S.role=data.r||''; S.model=data.m||'enterprise'; S.contact=data.ct||''; S.phone=data.ph||''; S.entities=data.e||'';
       if(data.a){ RKEYS.forEach(k=>{ if(data.a[k]) S.answers[k]=data.a[k].map(v=>v===null?undefined:v); }); }
       REPORT_FROM_LINK=true;
       generateReport();
