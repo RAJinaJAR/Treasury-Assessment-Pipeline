@@ -1,122 +1,168 @@
-export default async function handler(req, res) {
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    return res.status(200).end();
-  }
+// ─────────────────────────────────────────────────────────────
+// Cloudflare Pages Function
+// File path in your repo MUST be:  functions/api/submit.js
+//   → serves POST /api/submit  (frontend fetch('/api/submit') unchanged)
+//
+// Handles THREE request types, all keyed by a shared `sessionId` so Power
+// Automate can ADD one row per taker and UPDATE it on later actions:
+//
+//   requestType = 'completion' → AUTOMATIC, fires the moment the report renders
+//                                (viewing the report IS the save). Power Automate
+//                                ADDS the pipeline row. This is the number you
+//                                count for "how many people actually took it".
+//   requestType = 'meeting'    → user clicked "Speak with an ION Treasury
+//                                Specialist". Power Automate mails the assessment
+//                                AND updates the row: OptedToSpecialist = Yes.
+//   requestType = 'pdf'        → user clicked "Download Report as PDF".
+//                                Power Automate updates the row: DownloadedPDF = Yes.
+//
+// Payload fields now include: sessionId, phone, acceptedTerms, consentedToContact.
+//
+// Secret: Cloudflare → Pages project → Settings → Environment variables
+//         → add TEAMS_WEBHOOK_URL
+// ─────────────────────────────────────────────────────────────
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+export async function onRequestOptions() {
+  return new Response(null, { status: 204, headers: CORS });
+}
 
-  const WEBHOOK_URL = process.env.TEAMS_WEBHOOK_URL;
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  const jsonHeaders = { ...CORS, 'Content-Type': 'application/json' };
+  const WEBHOOK_URL = env.TEAMS_WEBHOOK_URL;
+
   if (!WEBHOOK_URL) {
     console.error('TEAMS_WEBHOOK_URL not set');
-    return res.status(500).json({ error: 'Webhook not configured' });
+    return new Response(
+      JSON.stringify({ error: 'Webhook not configured' }),
+      { status: 500, headers: jsonHeaders }
+    );
   }
 
   try {
-    const d = req.body;
+    const d = await request.json();
 
-    // Build RAG emoji
+    // Default to 'completion' so any older/edge payload still lands as a taker.
+    const requestType = d.requestType || 'completion';
+    const isMeeting = requestType === 'meeting';
+    const isPdf = requestType === 'pdf';
+    const isCompletion = requestType === 'completion';
+
     const ragEmoji = d.rag === 'Red' ? '🔴' : d.rag === 'Amber' ? '🟡' : '🟢';
 
-    // Build dimension breakdown string
-    const dimBreakdown = [
-      `00 Strategic Priorities: ${d.dim00}%`,
-      `01 Daily Operations: ${d.dim01}%`,
-      `02 Structural Volatility: ${d.dim02}%`,
-      `03 Shock Events: ${d.dim03}%`,
-      `04 Strategic Capital: ${d.dim04}%`,
-      `05 Ecosystem Scale: ${d.dim05}%`
-    ].join('\n');
+    // Title makes it obvious in the Teams channel which kind of event this is.
+    const titleText = isMeeting
+      ? `📅 Specialist Requested: ${d.company || 'Unknown'}`
+      : isPdf
+        ? `📄 PDF Downloaded: ${d.company || 'Unknown'}`
+        : `✅ Assessment Completed: ${d.company || 'Unknown'}`;
 
-    // Build answer details if available
-    let answerDetails = '';
-    if (d.answers && Array.isArray(d.answers)) {
-      answerDetails = d.answers.map(a =>
-        `[${a.dimension}] Q${a.questionIndex + 1}: ${a.selectedOption}`
-      ).join('\n');
-    }
+    const typeColor = isMeeting ? 'Accent' : isPdf ? 'Warning' : 'Good';
 
-    // Format as Adaptive Card for clean Teams channel rendering
     const card = {
-      type: "message",
+      type: 'message',
       text: JSON.stringify(d),
-      attachments: [{
-        contentType: "application/vnd.microsoft.card.adaptive",
-        content: {
-          "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-          type: "AdaptiveCard",
-          version: "1.4",
-          body: [
-            {
-              type: "TextBlock",
-              text: `📊 New Assessment: ${d.company || 'Unknown'}`,
-              weight: "Bolder",
-              size: "Medium",
-              wrap: true
-            },
-            {
-              type: "TextBlock",
-              text: `${d.name || 'Anonymous'} · ${d.contact || 'no contact'} · ${d.role || 'N/A'} · ${d.model || 'N/A'} · ${d.persona || 'N/A'}`,
-              isSubtle: true,
-              wrap: true
-            },
-            {
-              type: "TextBlock",
-              text: `${ragEmoji} Overall Score: ${d.overall}% (${d.rag})`,
-              weight: "Bolder",
-              color: d.rag === 'Red' ? 'Attention' : d.rag === 'Amber' ? 'Warning' : 'Good'
-            },
-            {
-              type: "FactSet",
-              facts: [
-                { title: "Dim 00 - Strategic Priorities", value: `${d.dim00}%` },
-                { title: "Dim 01 - Daily Operations", value: `${d.dim01}%` },
-                { title: "Dim 02 - Structural Volatility", value: `${d.dim02}%` },
-                { title: "Dim 03 - Shock Events", value: `${d.dim03}%` },
-                { title: "Dim 04 - Strategic Capital", value: `${d.dim04}%` },
-                { title: "Dim 05 - Ecosystem Scale", value: `${d.dim05}%` }
-              ]
-            },
-            {
-              type: "TextBlock",
-              text: `Submitted: ${d.timestamp || new Date().toISOString()}`,
-              isSubtle: true,
-              size: "Small"
-            },
-            {
-              type: "TextBlock",
-              text: JSON.stringify(d),
-              isVisible: false,
-              id: "rawPayload"
-            }
-          ]
-        }
-      }],
+      attachments: [
+        {
+          contentType: 'application/vnd.microsoft.card.adaptive',
+          content: {
+            $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+            type: 'AdaptiveCard',
+            version: '1.4',
+            body: [
+              {
+                type: 'TextBlock',
+                text: titleText,
+                weight: 'Bolder',
+                size: 'Medium',
+                wrap: true,
+              },
+              {
+                type: 'TextBlock',
+                text: `Request type: ${requestType.toUpperCase()}  ·  Session: ${d.sessionId || 'n/a'}`,
+                weight: 'Bolder',
+                color: typeColor,
+                spacing: 'None',
+                wrap: true,
+              },
+              {
+                type: 'TextBlock',
+                text: `${d.name || 'Anonymous'} · ${d.contact || 'no email'} · ${d.phone || 'no phone'} · ${d.role || 'N/A'} · ${d.model || 'N/A'}${d.entities ? ' · ' + d.entities + ' entities' : ''}`,
+                isSubtle: true,
+                wrap: true,
+              },
+              {
+                type: 'TextBlock',
+                text: `Consent to contact: ${d.consentedToContact || 'No'}  ·  Terms accepted: ${d.acceptedTerms || 'Yes'}`,
+                isSubtle: true,
+                size: 'Small',
+                wrap: true,
+              },
+              {
+                type: 'TextBlock',
+                text: `${ragEmoji} Overall Score: ${d.overall}% (${d.rag})${d.overallUnweighted != null ? ` · Unweighted ${d.overallUnweighted}%` : ''}`,
+                weight: 'Bolder',
+                color: d.rag === 'Red' ? 'Attention' : d.rag === 'Amber' ? 'Warning' : 'Good',
+              },
+              {
+                type: 'FactSet',
+                facts: [
+                  { title: 'Regime 01 - Daily Operations', value: `${d.reg01}%` },
+                  { title: 'Regime 02 - Market Volatility', value: `${d.reg02}%` },
+                  { title: 'Regime 03 - Crisis Resilience', value: `${d.reg03}%` },
+                  { title: 'Regime 04 - Strategic Capital', value: `${d.reg04}%` },
+                  { title: 'Regime 05 - Group Scale', value: `${d.reg05}%` },
+                ],
+              },
+              {
+                type: 'TextBlock',
+                text: `Submitted: ${d.timestamp || new Date().toISOString()}`,
+                isSubtle: true,
+                size: 'Small',
+              },
+              {
+                type: 'TextBlock',
+                text: JSON.stringify(d),
+                isVisible: false,
+                id: 'rawPayload',
+              },
+            ],
+          },
+        },
+      ],
       // Full payload as JSON string for Power Automate to parse
-      summary: JSON.stringify(d)
+      summary: JSON.stringify(d),
     };
 
     const webhookRes = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(card)
+      body: JSON.stringify(card),
     });
 
     if (!webhookRes.ok) {
       const errText = await webhookRes.text();
       console.error('Webhook error:', webhookRes.status, errText);
-      return res.status(502).json({ error: 'Webhook delivery failed', status: webhookRes.status });
+      return new Response(
+        JSON.stringify({ error: 'Webhook delivery failed', status: webhookRes.status }),
+        { status: 502, headers: jsonHeaders }
+      );
     }
 
-    return res.status(200).json({ ok: true, message: 'Assessment submitted successfully' });
-
+    return new Response(
+      JSON.stringify({ ok: true, message: 'Submitted successfully', requestType }),
+      { status: 200, headers: jsonHeaders }
+    );
   } catch (err) {
     console.error('Submit error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: jsonHeaders }
+    );
   }
 }
