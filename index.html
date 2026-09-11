@@ -793,25 +793,39 @@ const QS = {
   ],
 };
 
+// A1: the 'high' strings are rewritten to describe the maturity band WITHOUT
+//     asserting named capabilities (no 'real-time', 'in place', 'automated
+//     execution', 'on demand'), because those clauses previously rendered
+//     directly above answer rows that contradicted them. A fourth 'mixed' state
+//     is added to every regime, selected when a regime holds both a score-4 and
+//     a score-1 or score-2 answer; it leads with the unevenness and also names
+//     no specific capability. mid/low copy is unchanged except that the two
+//     lines naming a capability the answer could disprove (vol.low FX discovery)
+//     are retained only in mid/low where the band already implies weakness.
 const NAR = {
   ops:{
-    high:'Your daily operations infrastructure is strong. Real-time cash visibility, automated payment processing and structured forecast tracking are in place. A strong operational foundation can reduce manual effort and provide the visibility and control needed to support broader treasury priorities.',
+    high:'Your daily operations sit at a strong level of maturity. Across this regime, your responses point to well-developed technology and process control, which can reduce manual effort and give treasury the visibility and control to support broader priorities.',
+    mixed:'Your daily operations show an uneven profile. Some areas are handled to a strong, well-supported standard while others remain more manual, so the picture here is mixed rather than uniform. The priority is typically to bring the weaker areas up to the level of the strongest.',
     mid:'Your operational foundation has elements of good practice but relies on manual processes or lagged data in some areas. These gaps may reduce forecast reliability, limit visibility of counterparty exposure and increase operational effort across day-to-day activity.',
     low:'Your treasury operations rely on largely manual, fragmented processes. This may mean the team spends significant time on reconciliation and data gathering rather than analysis. Strengthening this foundation can make higher-regime capabilities easier to develop and sustain.' },
   vol:{
-    high:'Your volatility management infrastructure is in strong shape. Real-time FX exposure, policy-driven hedging with automated execution and rate sensitivity modelling on demand support a proactive approach to market risk.',
-    mid:'Your FX and volatility management has partial automation with some remaining gaps. Discovery lag in FX exposure, slower hedge execution or ad hoc rate sensitivity modelling may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.',
-    low:'Your treasury has limited infrastructure for managing structural volatility. FX exposure is discovered through reporting rather than monitoring, and rate sensitivity requires significant manual effort. Current response times may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.' },
+    high:'Your volatility management sits at a strong level of maturity. Across this regime, your responses point to a proactive, well-supported approach to market risk, helping treasury stay ahead of FX, rate and funding pressure.',
+    mixed:'Your volatility management shows an uneven profile. Some areas are handled to a strong standard while others remain more manual or slower, so the picture here is mixed rather than uniform. The priority is typically to lift the weaker areas to the level of the strongest.',
+    mid:'Your FX and volatility management has partial automation with some remaining gaps. Slower discovery of FX exposure, slower hedge execution or ad hoc rate sensitivity modelling may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.',
+    low:'Your treasury has limited infrastructure for managing structural volatility. Exposure tends to be discovered through reporting rather than monitoring, and rate sensitivity requires significant manual effort. Current response times may increase exposure to adverse market movements and limit treasury\u2019s ability to respond quickly.' },
   shock:{
-    high:'Your crisis resilience infrastructure is well-developed. Structured monitoring, scenario analysis and early-warning indicators support a strong level of response preparedness, helping the team assess exposure and act quickly when shock events occur.',
+    high:'Your crisis resilience sits at a strong level of maturity. Across this regime, your responses point to well-developed preparedness, helping the team assess exposure and act quickly when shock events occur.',
+    mixed:'Your crisis resilience shows an uneven profile. Some areas are well developed while others remain reactive or ad hoc, so the picture here is mixed rather than uniform. The priority is typically to raise the weaker areas to the level of the strongest.',
     mid:'Your crisis capabilities are partially developed. Some monitoring and procedures are in place, but elements such as repeatable stress scenarios and covenant early warning are not yet fully systematised, which may limit the speed of exposure assessment and response.',
     low:'Your treasury has limited infrastructure for absorbing shock events. Crisis response is largely reactive and stress testing is absent or ad hoc, which may reduce the speed of exposure assessment, liquidity visibility and overall response preparedness.' },
   strat:{
-    high:'Your treasury contributes strong, timely input to strategic capital discussions. Capital analysis, transaction support, external reporting and CFO reporting are operating at a standard that supports high-quality, well-grounded decision-making.',
+    high:'Your strategic capital contribution sits at a strong level of maturity. Across this regime, your responses point to timely, well-grounded input to board-level capital and funding decisions.',
+    mixed:'Your strategic capital contribution shows an uneven profile. Treasury adds strong input in some areas while others remain more operational, so the picture here is mixed rather than uniform. The priority is typically to extend the stronger areas across the rest of the regime.',
     mid:'Your responses suggest that treasury can support some strategic capital analysis but is constrained by infrastructure. The quality and timeliness of that contribution may be limited by manual effort, which can slow the input treasury brings to board-level decisions.',
     low:'Your responses suggest that treasury\u2019s contribution is currently weighted more toward operational reporting than strategic capital analysis. Strengthening the underlying data and reporting foundation may improve the speed and quality of the input treasury can bring to capital decisions.' },
   scale:{
-    high:'Your group treasury architecture is operating well at scale. Broad entity visibility, coordinated intercompany funding, structured acquisition integration and automated group reporting support consistent control across the group.',
+    high:'Your group treasury architecture sits at a strong level of maturity. Across this regime, your responses point to consistent control and coordination as the group scales.',
+    mixed:'Your group treasury architecture shows an uneven profile. Some areas scale well while others remain manual or slower, so the picture here is mixed rather than uniform. The priority is typically to bring the weaker areas up to the level of the strongest.',
     mid:'Your group treasury capability has some strong elements, but scale is exposing gaps. As the number of entities grows, partial coverage and slower intercompany processes can make visibility, funding coordination and standardisation increasingly difficult.',
     low:'Your treasury architecture is not yet designed for group-scale complexity. As the number of entities grows, fragmented processes can make visibility, funding coordination and standardisation increasingly difficult, and make governance and oversight harder to maintain.' },
 };
@@ -926,6 +940,18 @@ const EXEC_BODY = {
   mid:'Your responses suggest a solid operational foundation with opportunities to strengthen higher-regime capabilities. Where your regime results are lower, these gaps may limit the speed, visibility and analytical capacity treasury can bring to more strategic decisions. The path from your current position toward a more strategic treasury is addressable and can be sequenced to your priorities.',
   midlow:'Your treasury is managing the essentials with a mix of manual processes and partial system support. Where regime results are lower, the team may be spending a disproportionate amount of time on data gathering and reconciliation, which can limit the capacity available for analysis and more strategic contribution. Establishing a reliable technology and operating foundation is typically the priority before higher-regime capabilities can be developed and sustained.',
   low:'Your responses suggest a treasury function operating predominantly on manual processes with limited system integration. This is not uncommon — many treasury functions were built for a world of simpler capital structures, fewer entities and more stable markets. The gap is largely architectural, and strengthening the technology foundation can make higher-regime capabilities easier to develop over time.',
+};
+// A7: uniform-profile variants. The EXEC_BODY strings above lean on phrases such
+//     as "Where regime results are lower", which read as false on a profile
+//     where every regime is identical. These variants are selected when the
+//     spread across applicable regimes is under 10 points, so a level profile is
+//     described as level rather than uneven. No em dashes, per house style.
+const EXEC_BODY_UNIFORM = {
+  high:'Your responses indicate a treasury function operating at a consistently strong, strategic level. Technology, process maturity and the treasury data foundation appear well developed and even across the regimes assessed. At this level the focus is typically on compounding those strengths, deepening automation, extending coverage and strengthening the data that supports strategic capital and funding decisions.',
+  midhigh:'Your responses indicate consistently strong operational capability across the regimes assessed, with an even technology foundation rather than isolated strengths. The next stage is typically to build on that consistency, strengthening the treasury data and analytical foundation used for more strategic decisions.',
+  mid:'Your responses indicate a consistent, solid operational foundation across the regimes assessed, with maturity spread evenly rather than concentrated in any one area. The path toward a more strategic treasury is addressable and can be sequenced steadily from this balanced base.',
+  midlow:'Your responses indicate a consistent, developing profile across the regimes assessed, with a mix of manual processes and partial system support throughout. Establishing a reliable technology and operating foundation is typically the priority before higher-regime capabilities can be developed and sustained.',
+  low:'Your responses indicate a treasury function operating consistently on manual processes across the regimes assessed. This is not uncommon, and the gap is largely architectural. Strengthening the technology foundation can make higher-regime capabilities easier to develop over time.',
 };
 
 // Each roadmap item is tagged with the regime it belongs to (r). When a regime
@@ -1075,6 +1101,18 @@ function naQuestionSet(regimeKey){
   const set=new Set();
   (S.answers[regimeKey]||[]).forEach((ai,qi)=>{ if(isNAsel(regimeKey,qi,ai)) set.add(qi); });
   return set;
+}
+// A1: a regime is "mixed" when it holds both a top answer (score 4) and a weak
+//     answer (score 1 or 2), excluding N/A. Used to select the mixed narrative
+//     so a regime average can no longer hide an internally polarised profile.
+function regimeMixed(regimeKey){
+  let hi=false, lo=false;
+  (S.answers[regimeKey]||[]).forEach((ai,qi)=>{
+    if(ai===undefined||ai===null||isNAsel(regimeKey,qi,ai)) return;
+    if(ai===3) hi=true;            // score 4
+    if(ai===0||ai===1) lo=true;    // score 1 or 2
+  });
+  return hi && lo;
 }
 
 // ══════════════════════════════════════════════ SETUP
@@ -1344,15 +1382,33 @@ function identifyGaps(){
 // ── Persona-specific narrative flavour (PE, Public Sector, Commodity, etc.).
 //    Appended to the executive summary so the language reflects the operating
 //    model rather than reading as generic corporate treasury.
+// A8: each entry is now a {building, sustaining} pair. The building variant is
+//     used below the strong band; the sustaining variant is selected at overall
+//     68 and above, so a mature respondent is not told to establish foundations
+//     they have already built. No em dashes, per house style.
 const PERSONA_FLAVOUR={
-  enterprise:'As a multi-entity enterprise, the greatest leverage typically comes from consistency and control across the group — standardised visibility, coordinated funding and automated group reporting.',
-  midmarket:'As a growing business building treasury capability, the priority is usually establishing reliable operational foundations before layering on more advanced volatility and strategic capabilities.',
-  capmarkets:'As a market-facing institution, performance under FX, rate and funding pressure is central, so volatility management and crisis resilience carry particular weight.',
-  publicsec:'As a mandate-driven public sector institution, governance, continuity and reserve management typically matter more than private-sector capital allocation or M&A activity.',
-  portfolio:'As a PE / funds portfolio treasury, value tends to concentrate in portfolio-entity visibility, capital recycling, intercompany funding and acquisition cadence across holdings.',
-  commodity:'As a commodity trading treasury, margin, price volatility and FX/rate exposure dominate, so volatility controls and liquidity resilience are especially important.',
-  whitelabel:'As an institutional white-label provider, resilience, control and scalable group reporting across client-facing capability are typically the defining priorities.',
-  other:''
+  enterprise:{
+    building:'As a multi-entity enterprise, the greatest leverage typically comes from establishing consistency and control across the group, standardised visibility, coordinated funding and automated group reporting.',
+    sustaining:'As a multi-entity enterprise, the greatest leverage now comes from sustaining consistency and control across the group, deepening standardised visibility, coordinated funding and automated group reporting.' },
+  midmarket:{
+    building:'As a growing business building treasury capability, the priority is usually establishing reliable operational foundations before layering on more advanced volatility and strategic capabilities.',
+    sustaining:'As a growing business that has moved beyond first-time foundations, the priority shifts to extending your operational strength into more advanced volatility and strategic capabilities.' },
+  capmarkets:{
+    building:'As a market-facing institution, performance under FX, rate and funding pressure is central, so volatility management and crisis resilience carry particular weight.',
+    sustaining:'As a market-facing institution, performance under FX, rate and funding pressure is central, so the focus is on sustaining your strength in volatility management and crisis resilience.' },
+  publicsec:{
+    building:'As a mandate-driven public sector institution, governance, continuity and reserve management typically matter more than private-sector capital allocation or M&A activity.',
+    sustaining:'As a mandate-driven public sector institution, the focus is on sustaining strong governance, continuity and reserve management rather than private-sector capital allocation or M&A activity.' },
+  portfolio:{
+    building:'As a PE / funds portfolio treasury, value tends to concentrate in portfolio-entity visibility, capital recycling, intercompany funding and acquisition cadence across holdings.',
+    sustaining:'As a PE / funds portfolio treasury, the focus is on sustaining strong portfolio-entity visibility, capital recycling, intercompany funding and acquisition cadence across holdings.' },
+  commodity:{
+    building:'As a commodity trading treasury, margin, price volatility and FX/rate exposure dominate, so volatility controls and liquidity resilience are especially important.',
+    sustaining:'As a commodity trading treasury, margin, price volatility and FX/rate exposure dominate, so the focus is on sustaining strong volatility controls and liquidity resilience.' },
+  whitelabel:{
+    building:'As an institutional white-label provider, resilience, control and scalable group reporting across client-facing capability are typically the defining priorities.',
+    sustaining:'As an institutional white-label provider, the focus is on sustaining resilience, control and scalable group reporting across client-facing capability.' },
+  other:{ building:'', sustaining:'' }
 };
 // ── Dynamic executive summary ──
 // Replaces the static band-only template. It inspects the ACTUAL distribution
@@ -1392,6 +1448,23 @@ function buildExecSummary(scores, pct, tier, gapsAll){
     const weakTxt=weakNames.length?weakNames.join(', '):'others';
     return `Your treasury maturity is highly uneven. Certain capabilities operate at a strong, near-strategic level (${strongTxt}), while others remain foundational and largely manual (${weakTxt}). An overall average understates this: the most valuable next step is likely to be addressing the specific weaker regimes rather than a broad, uniform transformation.`;
   }
+  // A6: intra-regime polarisation. The spread test above compares regime
+  //     averages only, so a profile that alternates best-in-class and
+  //     foundational answers can average out to a flat, misleading spread. If
+  //     any applicable regime holds both a score-4 and a score-1 answer, route
+  //     to the uneven narrative and name the polarised regimes.
+  const polarised=applicable.filter(k=>{
+    let phi=false, plo=false;
+    (S.answers[k]||[]).forEach((ai,qi)=>{
+      if(ai===undefined||ai===null||isNAsel(k,qi,ai)) return;
+      if(ai===3) phi=true; if(ai===0) plo=true;
+    });
+    return phi && plo;
+  }).map(nm);
+  if(polarised.length){
+    const list=polarised.join(', ');
+    return `Your treasury maturity is highly uneven. Within individual regimes (${list}) your answers range from best-in-class to foundational, so an overall average is misleading. The most valuable next step is likely to be lifting the weakest answers within these regimes rather than pursuing a broad, uniform transformation.`;
+  }
   // Orientation-aware (operations vs strategic) when both are applicable and
   // clearly diverge. A5: only fire when the WEAKER of the two is actually below
   // the strong band, so a 95%/75% profile is never told a strength is weak.
@@ -1401,7 +1474,9 @@ function buildExecSummary(scores, pct, tier, gapsAll){
     }
     return `Your responses indicate strong strategic capability, but day-to-day operational processes are less mature and may reduce efficiency and scalability. Treasury contributes well at the strategic level, yet manual or fragmented operations can constrain the reliability and speed of that contribution. Strengthening the operational foundation is typically the priority to make the strategic strength sustainable.`;
   }
-  // Uniform / narrow spread → band-appropriate wording.
+  // A7: uniform / narrow spread. A level profile gets copy that does not imply
+  //     some regimes are lower than others; otherwise the standard band copy.
+  if(spread<10) return EXEC_BODY_UNIFORM[tier.key];
   return EXEC_BODY[tier.key];
 }
 function generateReport(){
@@ -1468,9 +1543,12 @@ function generateReport(){
 
   const dcards=REGIMES.map((dim,i)=>{
     const sc=scores[dim.key]; const r2=rag(sc.pct);
+    // A1: choose the mixed narrative when the regime is internally polarised,
+    //     otherwise fall back to the band tier.
+    const nkey = regimeMixed(dim.key) ? 'mixed' : narTier(sc.pct);
     const nar = sc.naRegime
       ? 'Based on your responses, the questions in this regime were indicated as not applicable to your organisation. This regime is therefore excluded from your maturity scoring and does not affect your overall result.'
-      : NAR[dim.key][narTier(sc.pct)];
+      : NAR[dim.key][nkey];
     const rows=(S.answers[dim.key]||[]).map((ai,qi)=>{
       const q=QS[dim.key][qi];
       if(ai===undefined||ai===null) return '';
@@ -1568,8 +1646,25 @@ function generateReport(){
   const pillarHTML=ION_PILLARS.map(p=>`<div class="qcard" style="padding:16px 18px"><div class="reclbl" style="margin-bottom:6px">${p[0]}</div><div class="ftxt" style="color:var(--muted)">${p[1]}</div></div>`).join('');
 
   // Dynamic, distribution-aware executive summary + persona flavour.
-  const personaFlavour=PERSONA_FLAVOUR[S.model]||'';
+  // A8: select the sustaining variant at overall 68 and above.
+  const pf=PERSONA_FLAVOUR[S.model];
+  const personaFlavour=pf ? (pct>=68 ? pf.sustaining : pf.building) : '';
   const execSummary=buildExecSummary(scores,pct,tier,gapsAll)+(personaFlavour?(' '+personaFlavour):'');
+
+  // C1: the roadmap introduction and the "Why ION Treasury" paragraph are both
+  //     static and assume immaturity, so on a mature or zero-gap report they read
+  //     as a mail-merge. Select a sustaining variant at overall 85+ or zero gaps.
+  //     The roadmap intro is respondent-facing and can be written here. The "Why
+  //     ION Treasury" paragraph is compliance-reviewed ION copy, so its sustaining
+  //     variant is a [COPY-PENDING] placeholder for internal sign-off (see brief
+  //     section 1, item 3).
+  const matureClose=(pct>=85 || gapsAll.length===0);
+  const roadmapIntro=matureClose
+    ? `Based on your responses, your treasury is already operating at a strong level. The roadmap below is framed around extending and sustaining that maturity rather than building foundational capability. The appropriate sequence and priorities will depend on your existing architecture, business requirements and transformation objectives.`
+    : `Moving from operational to strategic treasury is a phased journey. Based on your responses, the following roadmap illustrates how organisations with a similar maturity profile may progressively strengthen their treasury technology and operating foundation. The appropriate sequence and priorities will depend on your existing architecture, business requirements and transformation objectives.`;
+  const whyIonIntro=matureClose
+    ? `[COPY-PENDING: high-maturity "Why ION Treasury" paragraph, reframed around extending and sustaining an already-strong treasury rather than replacing manual processes; awaiting compliance sign-off]`
+    : `Your assessment suggests that the next stage of treasury maturity may depend less on adding more manual processes and more on strengthening the technology foundation beneath the function. As complexity increases, fragmented systems, spreadsheets and manual workflows can become structural constraints on visibility, control and decision-making. ION Treasury provides the technology foundation to address these challenges, connecting daily operations, market risk, crisis resilience, strategic capital intelligence and group-scale coordination within an integrated treasury architecture.`;
 
   document.getElementById('report-body').innerHTML=`
     <div class="r-hero">
@@ -1614,12 +1709,12 @@ function generateReport(){
     <div class="dcards">${gapHTML || '<div class="qcard"><div class="ftxt">No capability gaps triggered — every applicable response scored at or near target state.</div></div>'}</div>
 
     <div class="sl" style="margin:36px 0 16px">Indicative Transformation Roadmap</div>
-    <p class="impact-t" style="margin-bottom:18px">Moving from operational to strategic treasury is a phased journey. Based on your responses, the following roadmap illustrates how organisations with a similar maturity profile may progressively strengthen their treasury technology and operating foundation. The appropriate sequence and priorities will depend on your existing architecture, business requirements and transformation objectives.</p>
+    <p class="impact-t" style="margin-bottom:18px">${roadmapIntro}</p>
     <div class="regime-grid" style="grid-template-columns:repeat(3,1fr)">${roadHTML}</div>
 
     <div class="impact-box" style="margin-top:36px">
       <div class="impact-h">Why ION Treasury</div>
-      <p class="impact-t" style="margin-bottom:18px">Your assessment suggests that the next stage of treasury maturity may depend less on adding more manual processes and more on strengthening the technology foundation beneath the function. As complexity increases, fragmented systems, spreadsheets and manual workflows can become structural constraints on visibility, control and decision-making. ION Treasury provides the technology foundation to address these challenges, connecting daily operations, market risk, crisis resilience, strategic capital intelligence and group-scale coordination within an integrated treasury architecture.</p>
+      <p class="impact-t" style="margin-bottom:18px">${whyIonIntro}</p>
       <div class="regime-grid" style="grid-template-columns:repeat(3,1fr)">${pillarHTML}</div>
       <p class="impact-t" style="margin-top:18px"><strong style="color:var(--white)">Control Cash, Command Capital, Shape Strategy — is your technology ready to take you there?</strong></p>
     </div>
