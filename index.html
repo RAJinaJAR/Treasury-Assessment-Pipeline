@@ -940,9 +940,9 @@ const ROADMAP = {
       {t:'Centralise payment processing and approval workflows', r:'ops'},
       {t:'Set up structured variance tracking for cash forecasting', r:'ops'} ] },
     { num:'PHASE 02', title:'Add Volatility Controls', horizon:'Indicative · medium term', items:[
-      {t:'Strengthen FX exposure consolidation and hedging governance', r:'vol'},
-      {t:'Support interest rate sensitivity analysis', r:'vol'},
-      {t:'Establish cross-entity cash pooling and netting', r:'vol'},
+      {t:'Strengthen FX exposure consolidation and hedging governance', r:'vol', q:0},
+      {t:'Support interest rate sensitivity analysis', r:'vol', q:2},
+      {t:'Establish cross-entity cash pooling and netting', r:'vol', q:3},
       {t:'Automate counterparty limit monitoring and alerts', r:'ops'} ] },
     { num:'PHASE 03', title:'Strengthen Strategic Foundation', horizon:'Indicative · longer term', items:[
       {t:'Strengthen the treasury data and reporting foundation used to support capital allocation decisions', r:'strat'},
@@ -953,7 +953,7 @@ const ROADMAP = {
   mid:[
     { num:'PHASE 01', title:'Close Operational Gaps', horizon:'Indicative · near term', items:[
       {t:'Strengthen real-time cash visibility across entities', r:'ops'},
-      {t:'Automate FX exposure consolidation', r:'vol'},
+      {t:'Automate FX exposure consolidation', r:'vol', q:0},
       {t:'Strengthen covenant and liquidity monitoring', r:'shock'},
       {t:'Establish a repeatable liquidity scenario-analysis cadence', r:'shock'} ] },
     { num:'PHASE 02', title:'Strengthen Strategic Foundation', horizon:'Indicative · medium term', items:[
@@ -976,7 +976,7 @@ const ROADMAP = {
     { num:'PHASE 02', title:'Deepen Strategic Foundation', horizon:'Indicative · medium term', items:[
       {t:'Increase treasury\u2019s contribution to strategic capital and funding decisions', r:'strat'},
       {t:'Strengthen system-generated forecasting and variance reporting', r:'ops'},
-      {t:'Improve access to consistent treasury data used for external reporting', r:'strat'},
+      {t:'Improve access to consistent treasury data used for external reporting', r:'strat', q:2},
       {t:'Improve access to treasury data required for transaction modelling', r:'strat'} ] },
     { num:'PHASE 03', title:'Sustain a Strategic Treasury', horizon:'Indicative · longer term', items:[
       {t:'Support intercompany funding at group scale through an internal bank model', r:'scale'},
@@ -984,6 +984,38 @@ const ROADMAP = {
       {t:'Strengthen measurement of treasury efficiency and performance', r:null},
       {t:'Increase treasury\u2019s contribution to capital and funding decisions', r:'strat'} ] },
   ],
+};
+// A9: gap-derived roadmap. Maps each capability-gap title to a roadmap action
+//     phrased as a priority. Wording matches the tone of the ROADMAP band
+//     tables above and reuses the exact strategic-capital strings so the
+//     PUBLICSEC_STRAT_ITEMS reframing continues to apply. No ION capability
+//     claim is introduced here; these are respondent-facing priorities only.
+const ROADMAP_GAP_ITEM = {
+  // Daily Operations
+  'Real-Time Cash Visibility':'Strengthen real-time cash visibility across entities',
+  'Payment Factory & FX Netting':'Centralise payment processing with FX netting',
+  'Forecast Accuracy Infrastructure':'Establish structured cash-forecast variance tracking',
+  'Counterparty Risk Governance':'Automate counterparty limit monitoring and alerts',
+  // Market Volatility
+  'FX Exposure Consolidation':'Automate FX exposure consolidation',
+  'Hedging Programme Speed':'Strengthen FX hedging governance and execution',
+  'Rate Sensitivity Modelling':'Support on-demand interest rate sensitivity analysis',
+  'Internal Capital Optimisation':'Establish cross-entity cash pooling and netting',
+  // Crisis Resilience
+  'Crisis Response Playbook':'Establish a crisis response playbook with automated exposure visibility',
+  'Liquidity Stress Testing':'Establish a repeatable liquidity stress-testing cadence',
+  'Covenant Early Warning':'Strengthen covenant monitoring and early warning',
+  'Tested Business Continuity':'Establish tested treasury business continuity procedures',
+  // Strategic Capital (keys align with PUBLICSEC_STRAT_ITEMS where reframed)
+  'Capital Allocation Intelligence':'Strengthen the treasury data and reporting foundation used to support capital allocation decisions',
+  'M&A Modelling Support':'Improve access to treasury data required for transaction modelling and funding decisions',
+  'Rating Agency Data':'Improve access to consistent treasury data used for external reporting',
+  'Executive Treasury Reporting':'Strengthen executive treasury reporting across cash, FX, liquidity and risk',
+  // Group Scale
+  'Group Entity Coverage':'Extend entity coverage across the group',
+  'Internal Bank Model':'Support intercompany funding through an internal bank model',
+  'Acquisition Integration':'Standardise treasury integration priorities for newly acquired entities',
+  'Group Treasury Intelligence':'Automate group treasury reporting',
 };
 // Public-sector roadmap items reframe strategic-capital language away from
 // private-sector "capital allocation / M&A / funding" toward mandate,
@@ -1035,6 +1067,15 @@ function narTier(pct){ return pct>=68?'high':pct>=42?'mid':'low'; }
 //    questions flagged na:true. They are excluded from scoring & gaps entirely.
 function naIndex(key,qi){ const q=QS[key][qi]; return (q&&q.na) ? q.opts.length-1 : -1; }
 function isNAsel(key,qi,ai){ return ai!==undefined && ai!==null && ai===naIndex(key,qi); }
+// B1: question-level N/A. Returns the set of question indices in a regime that
+//     the respondent answered N/A, so narrative clauses and roadmap items tied
+//     to a declined question can be suppressed even when the regime as a whole
+//     is still scored.
+function naQuestionSet(regimeKey){
+  const set=new Set();
+  (S.answers[regimeKey]||[]).forEach((ai,qi)=>{ if(isNAsel(regimeKey,qi,ai)) set.add(qi); });
+  return set;
+}
 
 // ══════════════════════════════════════════════ SETUP
 function modelCardHTML(m, on, handler){
@@ -1321,13 +1362,28 @@ const PERSONA_FLAVOUR={
 //   • ops-strong / strat-weak, or strat-strong / ops-weak → orientation-aware
 //     wording so the summary can't be factually backwards
 //   • otherwise → fall back to the band-appropriate EXEC_BODY text
-function buildExecSummary(scores, pct, tier){
+// A5: gapsAll is now passed in (rather than recomputed) so the high-maturity
+//     branch can gate on gap count, and the divergence branch has a floor so it
+//     cannot fire on a profile whose weaker side is still strong.
+function buildExecSummary(scores, pct, tier, gapsAll){
+  gapsAll = gapsAll || [];
   const applicable=RKEYS.filter(k=>scores[k].pct!==null);
   if(applicable.length===0) return EXEC_BODY[tier.key];
   const vals=applicable.map(k=>scores[k].pct);
   const hi=Math.max(...vals), lo=Math.min(...vals), spread=hi-lo;
   const nm=n=>REGIMES[RKEYS.indexOf(n)].name;
   const ops=scores.ops.pct, strat=scores.strat.pct;
+  // A5: high-maturity profile. At 85+ with two or fewer gaps there is no whole
+  //     regime to characterise as weak, so state the maturity and name the
+  //     single opportunity rather than arguing the report down.
+  if(pct>=85 && gapsAll.length<=2){
+    if(gapsAll.length===0){
+      return `Your responses indicate a treasury function operating at a strong, strategic level across every regime assessed. Technology, process maturity and the treasury data foundation appear well developed and internally consistent. At this level the focus is on sustaining and compounding those strengths rather than closing gaps.`;
+    }
+    const oppNames=[...new Set(gapsAll.map(g=>REGIMES[g.regime].name))];
+    const oppTxt=oppNames.join(' and ');
+    return `Your responses indicate a treasury function operating at a strong, strategic level. Across the regimes assessed, technology, process maturity and the treasury data foundation appear well developed. The single area worth attention is ${oppTxt}, where your responses point to a specific opportunity rather than a broad weakness.`;
+  }
   // Uneven: a wide spread means averages hide the real signal.
   if(spread>=40){
     const strongNames=applicable.filter(k=>scores[k].pct>=Math.max(68,hi-8)).map(nm);
@@ -1336,8 +1392,10 @@ function buildExecSummary(scores, pct, tier){
     const weakTxt=weakNames.length?weakNames.join(', '):'others';
     return `Your treasury maturity is highly uneven. Certain capabilities operate at a strong, near-strategic level (${strongTxt}), while others remain foundational and largely manual (${weakTxt}). An overall average understates this: the most valuable next step is likely to be addressing the specific weaker regimes rather than a broad, uniform transformation.`;
   }
-  // Orientation-aware (operations vs strategic) when both are applicable and clearly diverge.
-  if(ops!=null && strat!=null && Math.abs(ops-strat)>=25){
+  // Orientation-aware (operations vs strategic) when both are applicable and
+  // clearly diverge. A5: only fire when the WEAKER of the two is actually below
+  // the strong band, so a 95%/75% profile is never told a strength is weak.
+  if(ops!=null && strat!=null && Math.abs(ops-strat)>=25 && Math.min(ops,strat)<68){
     if(ops>strat){
       return `Your responses indicate strong operational capability alongside a weaker strategic-capital contribution. Daily execution appears well supported, but the treasury data and analytical foundation used for board-level capital, funding and reporting decisions is less developed. The priority is typically to extend the operational foundation into more strategic decision support.`;
     }
@@ -1377,15 +1435,28 @@ function generateReport(){
   //   • Otherwise (no gaps but uneven scores) → focus = lowest-scoring
   //     applicable regime (truthful, rather than an arbitrary model default).
   const allEqual=applicableKeys.length?applicableKeys.every(k=>scores[k].pct===scores[applicableKeys[0]].pct):true;
+  // A2: gap presence is tested first. Only a genuinely zero-gap report shows
+  //     "No immediate priority area"; a uniform-but-flawed profile still gets a
+  //     focus regime.
+  // A4: the focus is the regime with the highest severity-weighted gap load,
+  //     not the highest raw gap count. Each gap scores (severity 1 = weight 2,
+  //     severity 2 = weight 1) x the operating-model regime weight. Ties break
+  //     on the lowest applicable regime percentage. A fully N/A regime is never
+  //     eligible.
   let weakestIdx=-1;
-  if(allEqual){
-    weakestIdx=-1;
-  }else if(gapsAll.length>0){
-    const gapCounts=RKEYS.map((_,i)=>gapsAll.filter(g=>g.regime===i).length);
-    weakestIdx=gapCounts.indexOf(Math.max(...gapCounts));
-  }else{
-    const weakestKey=applicableKeys.reduce((a,k)=>scores[k].pct<scores[a].pct?k:a,applicableKeys[0]);
-    weakestIdx=RKEYS.indexOf(weakestKey);
+  if(gapsAll.length>0){
+    const mw=activeModel().w;
+    let bestScore=-Infinity, bestPct=Infinity;
+    RKEYS.forEach((k,i)=>{
+      if(scores[k].naRegime || scores[k].pct===null) return;
+      const regimeGaps=gapsAll.filter(g=>g.regime===i);
+      if(regimeGaps.length===0) return;
+      const sev=regimeGaps.reduce((a,g)=>a+((g.weight===1?2:1)*mw[i]),0);
+      const pctVal=scores[k].pct;
+      if(sev>bestScore || (sev===bestScore && pctVal<bestPct)){
+        bestScore=sev; bestPct=pctVal; weakestIdx=i;
+      }
+    });
   }
   const hasFocus=weakestIdx!==-1;
 
@@ -1442,18 +1513,48 @@ function generateReport(){
 
   const track=pct>=68?'high':pct>=42?'mid':'low';
   const phaseColors=['#0e7490','#b45309','#6d28d9'];
-  // Dynamic roadmap: keep only items whose regime is applicable (cross-cutting
-  // items r:null always kept); drop any phase left empty; renumber sequentially.
-  // Public-sector reframes strategic-capital language. This is what stops FX /
-  // volatility actions surfacing when that regime is N/A.
   const isApplicable=(rk)=> rk===null || (scores[rk] && !scores[rk].naRegime && scores[rk].pct!==null);
   const isPublic=(S.model==='publicsec');
-  const builtPhases=ROADMAP[track].map(ph=>{
-    const items=ph.items
-      .filter(it=>isApplicable(it.r))
-      .map(it=>(isPublic && PUBLICSEC_STRAT_ITEMS[it.t]) ? PUBLICSEC_STRAT_ITEMS[it.t] : it.t);
-    return { title:ph.title, horizon:ph.horizon, items };
-  }).filter(ph=>ph.items.length>0);
+  const applyPublic=(t)=> (isPublic && PUBLICSEC_STRAT_ITEMS[t]) ? PUBLICSEC_STRAT_ITEMS[t] : t;
+  // A9: the roadmap is now built from the respondent's actual gaps rather than
+  //     the overall percentage, so it can neither recommend completed work nor
+  //     omit a real weakness. Gaps are ordered by severity x operating-model
+  //     regime weight and bucketed into three phases of up to four items.
+  // B1: identifyGaps() already excludes any N/A question, so no N/A-sourced
+  //     action can enter the gap-derived roadmap. The band tables remain only as
+  //     the zero-gap fallback, where {t, r, q} tags let us drop items tied to an
+  //     N/A question or an excluded regime.
+  let builtPhases;
+  if(gapsAll.length>0){
+    const mw=activeModel().w;
+    const ordered=gapsAll
+      .map(g=>({ prio:(g.weight===1?2:1)*mw[g.regime], line:applyPublic(ROADMAP_GAP_ITEM[g.title]||g.title) }))
+      .sort((a,b)=> b.prio-a.prio);
+    const seen=new Set();
+    const lines=[];
+    ordered.forEach(o=>{ if(!seen.has(o.line)){ seen.add(o.line); lines.push(o.line); } });
+    const third=Math.max(1,Math.ceil(lines.length/3));
+    const cap4=arr=>arr.slice(0,4);
+    const phaseMeta=[
+      { title:'Near-Term Priorities',   horizon:'Indicative · near term' },
+      { title:'Medium-Term Priorities', horizon:'Indicative · medium term' },
+      { title:'Longer-Term Priorities', horizon:'Indicative · longer term' },
+    ];
+    const buckets=[ cap4(lines.slice(0,third)), cap4(lines.slice(third,third*2)), cap4(lines.slice(third*2)) ];
+    builtPhases=buckets
+      .map((items,i)=>({ title:phaseMeta[i].title, horizon:phaseMeta[i].horizon, items }))
+      .filter(ph=>ph.items.length>0);
+  }else{
+    // Zero-gap fallback: retain the band tables. Filter out any item tied to an
+    // excluded regime (r) or an N/A question (q), then renumber.
+    builtPhases=ROADMAP[track].map(ph=>{
+      const items=ph.items
+        .filter(it=>isApplicable(it.r))
+        .filter(it=>!(it.q!==undefined && it.q!==null && it.r && naQuestionSet(it.r).has(it.q)))
+        .map(it=>applyPublic(it.t));
+      return { title:ph.title, horizon:ph.horizon, items };
+    }).filter(ph=>ph.items.length>0);
+  }
   const roadHTML = builtPhases.length
     ? builtPhases.map((ph,i)=>`
     <div class="qcard" style="border-top:3px solid ${phaseColors[i%phaseColors.length]}">
@@ -1468,7 +1569,7 @@ function generateReport(){
 
   // Dynamic, distribution-aware executive summary + persona flavour.
   const personaFlavour=PERSONA_FLAVOUR[S.model]||'';
-  const execSummary=buildExecSummary(scores,pct,tier)+(personaFlavour?(' '+personaFlavour):'');
+  const execSummary=buildExecSummary(scores,pct,tier,gapsAll)+(personaFlavour?(' '+personaFlavour):'');
 
   document.getElementById('report-body').innerHTML=`
     <div class="r-hero">
