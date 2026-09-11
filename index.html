@@ -593,10 +593,10 @@ h1 em { color:#4aa3e0; }
     <p class="sd">Your operating model is the lens through which we assess your treasury, ensuring your results reflect your operating reality rather than a generic average. Your assessment will measure readiness across five dimensions of modern treasury, from daily operations and market volatility to crisis resilience, strategic capital and group scale.</p>
     <div class="frow">
       <div class="fg"><label class="fl">Organisation Name *</label><input id="i-co" class="fi" type="text" placeholder="Legal or trading name"></div>
-      <div class="fg"><label class="fl">Your Name</label><input id="i-nm" class="fi" type="text" placeholder="First and last name"></div>
+      <div class="fg"><label class="fl">Your Name *</label><input id="i-nm" class="fi" type="text" placeholder="First and last name"></div>
     </div>
     <div class="frow">
-      <div class="fg"><label class="fl">Your Role</label>
+      <div class="fg"><label class="fl">Your Role *</label>
         <div class="sw"><select id="i-role" class="fs">
           <option value="">Select your role</option>
           <option value="cfo">CFO / Group CFO</option>
@@ -606,7 +606,7 @@ h1 em { color:#4aa3e0; }
           <option value="other">Other</option>
         </select></div>
       </div>
-      <div class="fg"><label class="fl">Number of Entities</label>
+      <div class="fg"><label class="fl">Number of Entities *</label>
         <div class="sw"><select id="i-ent" class="fs">
           <option value="">Select range</option>
           <option value="1">Single entity</option>
@@ -965,22 +965,72 @@ const EXEC_BODY = {
   low:'Your responses suggest a treasury function operating predominantly on manual processes with limited system integration. This is not uncommon — many treasury functions were built for a world of simpler capital structures, fewer entities and more stable markets. The gap is largely architectural, and strengthening the technology foundation can make higher-regime capabilities easier to develop over time.',
 };
 
+// Each roadmap item is tagged with the regime it belongs to (r). When a regime
+// is N/A / excluded (e.g. no FX exposure → vol excluded), every item tagged to
+// that regime is filtered out of the roadmap, and any phase left empty is
+// dropped entirely. Items tagged r:null are cross-cutting and always kept.
 const ROADMAP = {
   low:[
-    { num:'PHASE 01', title:'Build the Foundation', horizon:'Indicative · near term', items:['Implement automated bank connectivity and a TMS','Establish real-time cash visibility across entities','Centralise payment processing and approval workflows','Set up structured variance tracking for cash forecasting'] },
-    { num:'PHASE 02', title:'Add Volatility Controls', horizon:'Indicative · medium term', items:['Strengthen FX exposure consolidation and hedging governance','Support interest rate sensitivity analysis','Establish cross-entity cash pooling and netting','Automate counterparty limit monitoring and alerts'] },
-    { num:'PHASE 03', title:'Strengthen Strategic Foundation', horizon:'Indicative · longer term', items:['Strengthen the treasury data and reporting foundation used to support capital allocation decisions','Improve access to treasury data required for transaction modelling and funding decisions','Strengthen covenant monitoring and repeatable liquidity scenario analysis','Automate group treasury reporting'] },
+    { num:'PHASE 01', title:'Build the Foundation', horizon:'Indicative · near term', items:[
+      {t:'Implement automated bank connectivity and a TMS', r:'ops'},
+      {t:'Establish real-time cash visibility across entities', r:'ops'},
+      {t:'Centralise payment processing and approval workflows', r:'ops'},
+      {t:'Set up structured variance tracking for cash forecasting', r:'ops'} ] },
+    { num:'PHASE 02', title:'Add Volatility Controls', horizon:'Indicative · medium term', items:[
+      {t:'Strengthen FX exposure consolidation and hedging governance', r:'vol'},
+      {t:'Support interest rate sensitivity analysis', r:'vol'},
+      {t:'Establish cross-entity cash pooling and netting', r:'vol'},
+      {t:'Automate counterparty limit monitoring and alerts', r:'ops'} ] },
+    { num:'PHASE 03', title:'Strengthen Strategic Foundation', horizon:'Indicative · longer term', items:[
+      {t:'Strengthen the treasury data and reporting foundation used to support capital allocation decisions', r:'strat'},
+      {t:'Improve access to treasury data required for transaction modelling and funding decisions', r:'strat'},
+      {t:'Strengthen covenant monitoring and repeatable liquidity scenario analysis', r:'shock'},
+      {t:'Automate group treasury reporting', r:'scale'} ] },
   ],
   mid:[
-    { num:'PHASE 01', title:'Close Operational Gaps', horizon:'Indicative · near term', items:['Strengthen real-time cash visibility across entities','Automate FX exposure consolidation','Strengthen covenant and liquidity monitoring','Establish a repeatable liquidity scenario-analysis cadence'] },
-    { num:'PHASE 02', title:'Strengthen Strategic Foundation', horizon:'Indicative · medium term', items:['Strengthen the treasury data and reporting foundation used to support capital allocation decisions','Improve access to treasury data required for transaction modelling and funding decisions','Strengthen executive treasury reporting across cash, FX, liquidity and risk','Strengthen crisis visibility, scenario analysis and response preparedness'] },
-    { num:'PHASE 03', title:'Scale Across the Group', horizon:'Indicative · longer term', items:['Extend entity coverage across the group','Support intercompany funding through an internal bank model','Standardise treasury integration priorities for newly acquired entities','Automate group treasury reporting'] },
+    { num:'PHASE 01', title:'Close Operational Gaps', horizon:'Indicative · near term', items:[
+      {t:'Strengthen real-time cash visibility across entities', r:'ops'},
+      {t:'Automate FX exposure consolidation', r:'vol'},
+      {t:'Strengthen covenant and liquidity monitoring', r:'shock'},
+      {t:'Establish a repeatable liquidity scenario-analysis cadence', r:'shock'} ] },
+    { num:'PHASE 02', title:'Strengthen Strategic Foundation', horizon:'Indicative · medium term', items:[
+      {t:'Strengthen the treasury data and reporting foundation used to support capital allocation decisions', r:'strat'},
+      {t:'Improve access to treasury data required for transaction modelling and funding decisions', r:'strat'},
+      {t:'Strengthen executive treasury reporting across cash, FX, liquidity and risk', r:'strat'},
+      {t:'Strengthen crisis visibility, scenario analysis and response preparedness', r:'shock'} ] },
+    { num:'PHASE 03', title:'Scale Across the Group', horizon:'Indicative · longer term', items:[
+      {t:'Extend entity coverage across the group', r:'scale'},
+      {t:'Support intercompany funding through an internal bank model', r:'scale'},
+      {t:'Standardise treasury integration priorities for newly acquired entities', r:'scale'},
+      {t:'Automate group treasury reporting', r:'scale'} ] },
   ],
   high:[
-    { num:'PHASE 01', title:'Optimise Existing Capability', horizon:'Indicative · near term', items:['Identify remaining visibility or automation gaps','Strengthen executive treasury reporting','Enhance crisis visibility and scenario analysis','Extend group entity coverage where gaps remain'] },
-    { num:'PHASE 02', title:'Deepen Strategic Foundation', horizon:'Indicative · medium term', items:['Increase treasury\u2019s contribution to strategic capital and funding decisions','Strengthen system-generated forecasting and variance reporting','Improve access to consistent treasury data used for external reporting','Improve access to treasury data required for transaction modelling'] },
-    { num:'PHASE 03', title:'Sustain a Strategic Treasury', horizon:'Indicative · longer term', items:['Support intercompany funding at group scale through an internal bank model','Integrate treasury data into the board reporting cycle','Strengthen measurement of treasury efficiency and performance','Increase treasury\u2019s contribution to capital and funding decisions'] },
+    { num:'PHASE 01', title:'Optimise Existing Capability', horizon:'Indicative · near term', items:[
+      {t:'Identify remaining visibility or automation gaps', r:'ops'},
+      {t:'Strengthen executive treasury reporting', r:'strat'},
+      {t:'Enhance crisis visibility and scenario analysis', r:'shock'},
+      {t:'Extend group entity coverage where gaps remain', r:'scale'} ] },
+    { num:'PHASE 02', title:'Deepen Strategic Foundation', horizon:'Indicative · medium term', items:[
+      {t:'Increase treasury\u2019s contribution to strategic capital and funding decisions', r:'strat'},
+      {t:'Strengthen system-generated forecasting and variance reporting', r:'ops'},
+      {t:'Improve access to consistent treasury data used for external reporting', r:'strat'},
+      {t:'Improve access to treasury data required for transaction modelling', r:'strat'} ] },
+    { num:'PHASE 03', title:'Sustain a Strategic Treasury', horizon:'Indicative · longer term', items:[
+      {t:'Support intercompany funding at group scale through an internal bank model', r:'scale'},
+      {t:'Integrate treasury data into the board reporting cycle', r:'strat'},
+      {t:'Strengthen measurement of treasury efficiency and performance', r:null},
+      {t:'Increase treasury\u2019s contribution to capital and funding decisions', r:'strat'} ] },
   ],
+};
+// Public-sector roadmap items reframe strategic-capital language away from
+// private-sector "capital allocation / M&A / funding" toward mandate,
+// governance and continuity (Test 12).
+const PUBLICSEC_STRAT_ITEMS = {
+  'Strengthen the treasury data and reporting foundation used to support capital allocation decisions':'Strengthen the treasury data and reporting foundation used to support mandate and policy decisions',
+  'Improve access to treasury data required for transaction modelling and funding decisions':'Improve access to treasury data required for reserve and liquidity management decisions',
+  'Increase treasury\u2019s contribution to strategic capital and funding decisions':'Increase treasury\u2019s contribution to reserve management and governance reporting',
+  'Improve access to treasury data required for transaction modelling':'Improve access to treasury data required for reserve and liquidity analysis',
+  'Increase treasury\u2019s contribution to capital and funding decisions':'Increase treasury\u2019s contribution to mandate, governance and continuity reporting',
 };
 
 const ION_PILLARS = [
@@ -994,7 +1044,7 @@ const ION_PILLARS = [
 
 // ══════════════════════════════════════════════ STATE
 const RKEYS = REGIMES.map(r=>r.key);
-let S = { model:null, company:'', name:'', role:'', contact:'', phone:'', entities:'', consentContact:false, sessionId:'', currentDim:0, answers:{}, _autoNA:{} };
+let S = { model:null, company:'', name:'', role:'', contact:'', phone:'', entities:'', consentContact:false, sessionId:'', currentDim:0, answers:{} };
 let REPORT_FROM_LINK = false;
 let COMPLETION_LOGGED = false;   // guards the automatic "assessment taken" ping
 // Stable per-session id so Teams/Power Automate can UPDATE the same row when the
@@ -1057,18 +1107,28 @@ function acceptTermsFromModal(){
   closeTermsModal();
 }
 function startAssessment(){
+  // ── Field validation: every setup field is mandatory so we never record
+  //    empty entries. Text fields must be non-blank; dropdowns must be off
+  //    their placeholder ('') value. First invalid field gets flagged + focus.
+  const invalid=(el)=>{ el.style.borderColor='#d93025'; el.focus(); };
   const co=document.getElementById('i-co').value.trim();
-  if(!co){ document.getElementById('i-co').style.borderColor='#d93025'; document.getElementById('i-co').focus(); return; }
+  if(!co){ invalid(document.getElementById('i-co')); return; }
+  const name=document.getElementById('i-nm').value.trim();
+  if(!name){ invalid(document.getElementById('i-nm')); return; }
+  const role=document.getElementById('i-role').value;
+  if(!role){ invalid(document.getElementById('i-role')); return; }
+  const entities=document.getElementById('i-ent').value;
+  if(!entities){ invalid(document.getElementById('i-ent')); return; }
   const contact=document.getElementById('i-contact').value.trim();
-  if(!contact){ document.getElementById('i-contact').style.borderColor='#d93025'; document.getElementById('i-contact').focus(); return; }
+  if(!contact){ invalid(document.getElementById('i-contact')); return; }
   const phone=document.getElementById('i-phone').value.trim();
-  if(!phone){ document.getElementById('i-phone').style.borderColor='#d93025'; document.getElementById('i-phone').focus(); return; }
+  if(!phone){ invalid(document.getElementById('i-phone')); return; }
   const terms=document.getElementById('i-terms');
   if(!terms || !terms.checked){ terms && terms.focus(); return; }
   S.company=co; S.contact=contact; S.phone=phone;
-  S.name=document.getElementById('i-nm').value.trim();
-  S.role=document.getElementById('i-role').value;
-  S.entities=document.getElementById('i-ent').value;
+  S.name=name;
+  S.role=role;
+  S.entities=entities;
   S.consentContact=document.getElementById('i-optin').checked;
   S.sessionId=newSessionId();
   if(!S.model) S.model='enterprise';
@@ -1149,15 +1209,6 @@ function renderDim(di){
     const sel=ans[qi];
     const risk = qi===0?'high':(qi===qs.length-1?'low':'medium');
     const impact = qi===0?impacts[0]:(qi===qs.length-1?impacts[2]:impacts[1]);
-    const autoSkipped = (dim.key==='vol' && qi===1 && S._autoNA['vol-1']);
-    if(autoSkipped){
-      return `<div class="qcard answered" id="qc-${di}-${qi}" style="opacity:.72">
-        <div class="qnum">${dim.id} · ${q.sc} · Q${qi+1} / ${qs.length}</div>
-        <span class="qimpact low">○ Not Applicable</span>
-        <div class="qtext">${q.t}</div>
-        <div class="dim-hed-desc" style="margin:6px 0 0;font-size:12px">Automatically classified as <strong>N/A</strong> because you indicated no material foreign currency exposure in the previous question. This question is excluded from scoring. To answer it, change your response to the FX Exposure Visibility question above.</div>
-      </div>`;
-    }
     return `<div class="qcard ${sel!==undefined?'answered':''}" id="qc-${di}-${qi}">
       <div class="qnum">${dim.id} · ${q.sc} · Q${qi+1} / ${qs.length}</div>
       <span class="qimpact ${risk}">${impact}</span>
@@ -1187,18 +1238,8 @@ function renderDim(di){
 }
 function answer(di,qi,oi,btn){
   const dim=REGIMES[di]; const ans=S.answers[dim.key]; ans[qi]=oi;
-  // ── Auto-skip: if FX Exposure Visibility (vol · Q1) is answered N/A,
-  //    auto-classify FX Hedging Programme (vol · Q2) as N/A and skip it.
-  //    If FX Exposure Visibility is later changed away from N/A, clear the
-  //    auto-assignment (only if it was auto-set, never a manual choice).
-  if(dim.key==='vol' && qi===0){
-    if(isNAsel('vol',0,oi)){
-      ans[1]=naIndex('vol',1); S._autoNA['vol-1']=true;
-    } else if(S._autoNA['vol-1']){
-      ans[1]=undefined; delete S._autoNA['vol-1'];
-    }
-    renderDim(di); return; // re-render so the skipped question reflects state
-  }
+  // Each question is answered independently — no auto-classification. Users can
+  // manually select a question's own "no material FX exposure" N/A option.
   const card=document.getElementById(`qc-${di}-${qi}`);
   card.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel'); card.classList.add('answered');
@@ -1304,6 +1345,53 @@ function identifyGaps(){
 }
 
 // ══════════════════════════════════════════════ REPORT
+// ── Persona-specific narrative flavour (Test 10 PE, Test 12 Public Sector, etc.)
+//    Appended to the executive summary so the language reflects the operating
+//    model rather than reading as generic corporate treasury.
+const PERSONA_FLAVOUR={
+  enterprise:'As a multi-entity enterprise, the greatest leverage typically comes from consistency and control across the group — standardised visibility, coordinated funding and automated group reporting.',
+  midmarket:'As a growing business building treasury capability, the priority is usually establishing reliable operational foundations before layering on more advanced volatility and strategic capabilities.',
+  capmarkets:'As a market-facing institution, performance under FX, rate and funding pressure is central, so volatility management and crisis resilience carry particular weight.',
+  publicsec:'As a mandate-driven public sector institution, governance, continuity and reserve management typically matter more than private-sector capital allocation or M&A activity.',
+  portfolio:'As a PE / funds portfolio treasury, value tends to concentrate in portfolio-entity visibility, capital recycling, intercompany funding and acquisition cadence across holdings.',
+  commodity:'As a commodity trading treasury, margin, price volatility and FX/rate exposure dominate, so volatility controls and liquidity resilience are especially important.',
+  whitelabel:'As an institutional white-label provider, resilience, control and scalable group reporting across client-facing capability are typically the defining priorities.',
+  other:''
+};
+// ── Dynamic executive summary (Tests 5, 6, 15) ──
+// Replaces the static band-only template. It inspects the ACTUAL distribution
+// of applicable regime scores and picks the narrative that matches reality:
+//   • uniform  → all applicable regimes within a narrow band
+//   • uneven   → wide spread between strongest and weakest (world-class in some,
+//                foundational in others) → "highly uneven" wording (Test 15)
+//   • ops-strong / strat-weak, or strat-strong / ops-weak → orientation-aware
+//     wording so the summary can't be factually backwards (Test 6)
+//   • otherwise → fall back to the band-appropriate EXEC_BODY text
+function buildExecSummary(scores, pct, tier){
+  const applicable=RKEYS.filter(k=>scores[k].pct!==null);
+  if(applicable.length===0) return EXEC_BODY[tier.key];
+  const vals=applicable.map(k=>scores[k].pct);
+  const hi=Math.max(...vals), lo=Math.min(...vals), spread=hi-lo;
+  const nm=n=>REGIMES[RKEYS.indexOf(n)].name;
+  const ops=scores.ops.pct, strat=scores.strat.pct;
+  // Uneven: a wide spread means averages hide the real signal.
+  if(spread>=40){
+    const strongNames=applicable.filter(k=>scores[k].pct>=Math.max(68,hi-8)).map(nm);
+    const weakNames=applicable.filter(k=>scores[k].pct<=Math.min(50,lo+8)).map(nm);
+    const strongTxt=strongNames.length?strongNames.join(', '):'some regimes';
+    const weakTxt=weakNames.length?weakNames.join(', '):'others';
+    return `Your treasury maturity is highly uneven. Certain capabilities operate at a strong, near-strategic level (${strongTxt}), while others remain foundational and largely manual (${weakTxt}). An overall average understates this: the most valuable next step is likely to be addressing the specific weaker regimes rather than a broad, uniform transformation.`;
+  }
+  // Orientation-aware (operations vs strategic) when both are applicable and clearly diverge.
+  if(ops!=null && strat!=null && Math.abs(ops-strat)>=25){
+    if(ops>strat){
+      return `Your responses indicate strong operational capability alongside a weaker strategic-capital contribution. Daily execution appears well supported, but the treasury data and analytical foundation used for board-level capital, funding and reporting decisions is less developed. The priority is typically to extend the operational foundation into more strategic decision support.`;
+    }
+    return `Your responses indicate strong strategic capability, but day-to-day operational processes are less mature and may reduce efficiency and scalability. Treasury contributes well at the strategic level, yet manual or fragmented operations can constrain the reliability and speed of that contribution. Strengthening the operational foundation is typically the priority to make the strategic strength sustainable.`;
+  }
+  // Uniform / narrow spread → band-appropriate wording.
+  return EXEC_BODY[tier.key];
+}
 function generateReport(){
   const scores=getScores();
   const pct=overallPct(scores);
@@ -1326,39 +1414,31 @@ function generateReport(){
   const strongest=applicableKeys.length?applicableKeys.reduce((a,k)=>scores[k].pct>scores[a].pct?k:a,applicableKeys[0]):RKEYS[0];
   const strongestIdx=RKEYS.indexOf(strongest);
   const gapsAll=identifyGaps();
-  // ── Priority Focus Area ──
-  //   Gaps determine the focus area WHEN gaps exist; the operating model
-  //   determines the focus area WHEN there are no capability gaps.
-  //   • If there are Priority Technology & Capability Gaps → name the Focus Area after the
-  //     regime the MAJORITY of those priority gaps fall into.
-  //   • If there are NO capability gaps → nothing to derive it from, so assign
-  //     the Focus Area from the Operating Model → Regime mapping below. ──
-  const MODEL_FOCUS={
-    enterprise:'scale',   // Enterprise Treasury            → Group Scale
-    midmarket:'ops',      // Mid-Market / Growing Business  → Daily Operations
-    capmarkets:'vol',     // Capital Markets & FI           → Market Volatility
-    publicsec:'shock',    // Central Banks & Public Sector  → Crisis Resilience
-    portfolio:'strat',    // PE / Funds Portfolio Treasury  → Strategic Capital
-    commodity:'vol',      // Commodity Trading              → Market Volatility
-    whitelabel:'scale',   // Bank / Institutional White-Label → Group Scale
-    other:'ops'           // Other                          → Daily Operations
-  };
+  // ── Strongest Regime & Priority Focus Area ──
+  //   • If every applicable regime has an IDENTICAL score, there is no weaker
+  //     area, so Priority Focus = "No immediate priority area" and Strongest
+  //     Regime = "All Regimes" (Tests 1 & 2).
+  //   • Otherwise, if there are capability gaps → focus = regime holding the
+  //     majority of priority gaps.
+  //   • Otherwise (no gaps but uneven scores) → focus = lowest-scoring
+  //     applicable regime (truthful, rather than an arbitrary model default).
   const allEqual=applicableKeys.length?applicableKeys.every(k=>scores[k].pct===scores[applicableKeys[0]].pct):true;
   let weakestIdx=-1;
-  if(gapsAll.length>0){
-    // regime where the majority of priority gaps fall
+  if(allEqual){
+    weakestIdx=-1;
+  }else if(gapsAll.length>0){
     const gapCounts=RKEYS.map((_,i)=>gapsAll.filter(g=>g.regime===i).length);
     weakestIdx=gapCounts.indexOf(Math.max(...gapCounts));
   }else{
-    // no gaps to derive from → operating model default
-    weakestIdx=RKEYS.indexOf(MODEL_FOCUS[S.model]||'ops');
+    const weakestKey=applicableKeys.reduce((a,k)=>scores[k].pct<scores[a].pct?k:a,applicableKeys[0]);
+    weakestIdx=RKEYS.indexOf(weakestKey);
   }
   const hasFocus=weakestIdx!==-1;
 
   const statHTML=`
     <div class="regime-card"><div class="rc-num" style="color:#0067b1">${pct}%</div><div class="rc-name">Weighted Maturity</div><div class="rc-label" style="margin-top:6px">Unweighted ${rawPct}%</div></div>
-    <div class="regime-card">${allEqual?`<div class="rc-name" style="color:var(--muted);font-size:14px;margin-bottom:4px">None</div>`:`<div class="rc-name" style="color:${REGIMES[strongestIdx].color};font-size:14px;margin-bottom:4px">${REGIMES[strongestIdx].name}</div>`}<div class="rc-label">Strongest Regime</div></div>
-    <div class="regime-card">${hasFocus?`<div class="rc-name" style="color:${REGIMES[weakestIdx].color};font-size:14px;margin-bottom:4px">${REGIMES[weakestIdx].name}</div>`:`<div class="rc-name" style="color:var(--muted);font-size:14px;margin-bottom:4px">None</div>`}<div class="rc-label">Priority Focus Area</div></div>
+    <div class="regime-card">${allEqual?`<div class="rc-name" style="color:var(--muted);font-size:14px;margin-bottom:4px">All Regimes</div>`:`<div class="rc-name" style="color:${REGIMES[strongestIdx].color};font-size:14px;margin-bottom:4px">${REGIMES[strongestIdx].name}</div>`}<div class="rc-label">Strongest Regime</div></div>
+    <div class="regime-card">${hasFocus?`<div class="rc-name" style="color:${REGIMES[weakestIdx].color};font-size:14px;margin-bottom:4px">${REGIMES[weakestIdx].name}</div>`:`<div class="rc-name" style="color:var(--muted);font-size:13px;margin-bottom:4px;line-height:1.3">No immediate priority area</div>`}<div class="rc-label">Priority Focus Area</div></div>
     <div class="regime-card"><div class="rc-num" style="color:#0067b1">${gapsAll.length}</div><div class="rc-name">Capability Gaps</div><div class="rc-label" style="margin-top:6px">${Math.min(gapsAll.length,6)} shown below</div></div>`;
 
   const dcards=REGIMES.map((dim,i)=>{
@@ -1408,15 +1488,33 @@ function generateReport(){
 
   const track=pct>=68?'high':pct>=42?'mid':'low';
   const phaseColors=['#0e7490','#b45309','#6d28d9'];
-  const roadHTML=ROADMAP[track].map((ph,i)=>`
-    <div class="qcard" style="border-top:3px solid ${phaseColors[i]}">
-      <div class="qnum">${ph.num}</div>
+  // Dynamic roadmap: keep only items whose regime is applicable (cross-cutting
+  // items r:null always kept); drop any phase left empty; renumber sequentially.
+  // Public-sector reframes strategic-capital language (Test 12). This is what
+  // stops FX / volatility actions surfacing when that regime is N/A (Tests 7,9).
+  const isApplicable=(rk)=> rk===null || (scores[rk] && !scores[rk].naRegime && scores[rk].pct!==null);
+  const isPublic=(S.model==='publicsec');
+  const builtPhases=ROADMAP[track].map(ph=>{
+    const items=ph.items
+      .filter(it=>isApplicable(it.r))
+      .map(it=>(isPublic && PUBLICSEC_STRAT_ITEMS[it.t]) ? PUBLICSEC_STRAT_ITEMS[it.t] : it.t);
+    return { title:ph.title, horizon:ph.horizon, items };
+  }).filter(ph=>ph.items.length>0);
+  const roadHTML = builtPhases.length
+    ? builtPhases.map((ph,i)=>`
+    <div class="qcard" style="border-top:3px solid ${phaseColors[i%phaseColors.length]}">
+      <div class="qnum">PHASE ${String(i+1).padStart(2,'0')}</div>
       <div class="qtext" style="font-size:15px;margin-bottom:2px">${ph.title}</div>
-      <div class="reclbl" style="color:${phaseColors[i]};margin-bottom:10px">${ph.horizon}</div>
+      <div class="reclbl" style="color:${phaseColors[i%phaseColors.length]};margin-bottom:10px">${ph.horizon}</div>
       <ul class="reclist">${ph.items.map(it=>`<li>${it}</li>`).join('')}</ul>
-    </div>`).join('');
+    </div>`).join('')
+    : `<div class="qcard"><div class="ftxt">No roadmap actions are indicated for the applicable regimes — your current responses are at or near target state.</div></div>`;
 
   const pillarHTML=ION_PILLARS.map(p=>`<div class="qcard" style="padding:16px 18px"><div class="reclbl" style="margin-bottom:6px">${p[0]}</div><div class="ftxt" style="color:var(--muted)">${p[1]}</div></div>`).join('');
+
+  // Dynamic, distribution-aware executive summary + persona flavour (Tests 5,6,7,15).
+  const personaFlavour=PERSONA_FLAVOUR[S.model]||'';
+  const execSummary=buildExecSummary(scores,pct,tier)+(personaFlavour?(' '+personaFlavour):'');
 
   document.getElementById('report-body').innerHTML=`
     <div class="r-hero">
@@ -1425,7 +1523,7 @@ function generateReport(){
         <div class="r-title">${S.company}</div>
         <div class="r-meta">${S.name?S.name+' · ':''}${roleMap[S.role]||''}${S.role?' · ':''}${m.name}${S.entities?' · '+S.entities+' entities':''}</div>
         <div class="verdict ${orag}" style="margin-bottom:12px"><span>${orag==='red'?'⬤':orag==='amber'?'◐':'✓'}</span> Overall Maturity: ${tier.label}</div>
-        <p class="r-sum">${EXEC_BODY[tier.key]}</p>
+        <p class="r-sum">${execSummary}</p>
       </div>
       <div class="ring-wrap">${ring}<div class="ring-lbl">Maturity Score</div></div>
     </div>
